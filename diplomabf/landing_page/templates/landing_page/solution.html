@@ -1,0 +1,322 @@
+{% extends 'landing_page/base.html' %}
+{% load static %}
+{% block title %}La Solution Blockchain — DiplomaChain{% endblock %}
+{% block meta_desc %}DiplomaChain rend les faux diplômes techniquement impossibles : tatouage numérique invisible, hachage SHA-256 et ancrage immuable sur blockchain Algorand. Vérification en moins de 3 secondes.{% endblock %}
+
+{% block extra_css %}
+<style>
+.content-section{padding:80px 0}
+.prose h3{font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:700;margin:28px 0 11px}
+.prose p{font-size:.9rem;color:var(--text-secondary);line-height:1.8;margin-bottom:14px}
+.prose strong{color:var(--text-primary)}
+.prose ul{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:16px}
+.prose ul li{font-size:.88rem;color:var(--text-secondary);display:flex;align-items:flex-start;gap:9px;line-height:1.6}
+.prose ul li::before{content:'›';color:var(--blue-400);font-weight:700;flex-shrink:0;margin-top:1px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+/* Piliers */
+.pillar{border-radius:var(--radius-xl);padding:36px;text-align:center;position:relative;overflow:hidden;border:1px solid var(--border);background:var(--gradient-card);transition:var(--transition)}
+.pillar:hover{transform:translateY(-8px);border-color:var(--border-glow);box-shadow:var(--shadow-glow)}
+.pillar::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gradient-accent)}
+.pillar-num{font-family:'Space Grotesk',sans-serif;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:var(--blue-400);margin-bottom:14px}
+.pillar-icon{font-size:2.8rem;margin-bottom:18px;display:block}
+.pillar-title{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:12px}
+.pillar-desc{font-size:.85rem;color:var(--text-secondary);line-height:1.7}
+.pillar-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:16px}
+/* Flow diagram */
+.flow{display:flex;align-items:center;gap:0;margin:36px 0;flex-wrap:wrap}
+.flow-box{background:var(--gradient-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px 20px;text-align:center;flex:1;min-width:140px;transition:var(--transition)}
+.flow-box:hover{border-color:var(--border-glow)}
+.flow-box-icon{font-size:1.6rem;margin-bottom:8px}
+.flow-box-title{font-size:.82rem;font-weight:700;margin-bottom:4px;font-family:'Space Grotesk',sans-serif}
+.flow-box-desc{font-size:.72rem;color:var(--text-muted);line-height:1.5}
+.flow-arrow{font-size:1.4rem;color:var(--blue-500);opacity:.5;padding:0 8px;flex-shrink:0}
+/* Users */
+.users-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.user-card{background:var(--gradient-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;transition:var(--transition)}
+.user-card:hover{border-color:var(--border-glow);transform:translateY(-4px)}
+.user-icon{font-size:2rem;margin-bottom:12px}
+.user-role{font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:6px}
+.user-desc{font-size:.82rem;color:var(--text-secondary);line-height:1.65}
+.user-benefit{display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:.75rem;font-weight:700;color:var(--green-400)}
+/* Algo section */
+.algo-box{background:linear-gradient(135deg,rgba(11,197,234,.06),rgba(66,153,225,.06));border:1px solid rgba(66,153,225,.22);border-radius:var(--radius-xl);padding:40px;text-align:center}
+.algo-metric{display:inline-block;margin:10px 20px}
+.algo-metric-val{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:800;background:var(--gradient-accent);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.algo-metric-lbl{font-size:.75rem;color:var(--text-muted)}
+/* Impact */
+.impact-row{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:32px 0}
+.imp{border-radius:var(--radius-lg);padding:24px;text-align:center;background:rgba(104,211,145,.05);border:1px solid rgba(104,211,145,.18);transition:var(--transition)}
+.imp:hover{border-color:rgba(104,211,145,.35);transform:translateY(-4px)}
+.imp-icon{font-size:2rem;margin-bottom:10px}
+.imp-title{font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:7px;font-size:.95rem}
+.imp-desc{font-size:.82rem;color:var(--text-secondary);line-height:1.65}
+.next-page-card{background:var(--gradient-card);border:1px solid var(--border-glow);border-radius:var(--radius-lg);padding:32px;text-align:center;margin-top:60px}
+.next-page-card h3{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;margin-bottom:10px}
+.next-page-card p{color:var(--text-secondary);font-size:.9rem;margin-bottom:22px}
+@media(max-width:900px){.two-col{grid-template-columns:1fr}.three-col,.users-grid,.impact-row{grid-template-columns:1fr 1fr}.flow{flex-direction:column}.flow-arrow{transform:rotate(90deg)}}
+@media(max-width:600px){.three-col,.users-grid,.impact-row{grid-template-columns:1fr}}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-hero" aria-labelledby="page-title">
+  <div class="page-hero-grid" aria-hidden="true"></div>
+  <div class="page-hero-orb" aria-hidden="true"></div>
+  <div class="section-container page-hero-content">
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{% url 'home' %}">Accueil</a><span>›</span>
+      <a href="{% url 'probleme' %}">Le Problème</a><span>›</span>
+      <span class="current">La Solution</span>
+    </nav>
+    <div class="badge badge-blue" style="margin-bottom:20px">✅ Technologie éprouvée</div>
+    <h1 class="page-title" id="page-title">DiplomaChain :<br><span class="accent">rendre la falsification</span><br>techniquement impossible</h1>
+    <p class="page-lead">Un registre blockchain infalsifiable combinant tatouage numérique invisible, cryptographie SHA-256 et ancrage sur Algorand. La vérification d'un diplôme passe de 30 jours à 3 secondes — gratuitement, sans intermédiaire.</p>
+  </div>
+</div>
+
+<!-- LES 3 PILIERS -->
+<section class="content-section" style="background:var(--bg-1)" aria-labelledby="piliers-title">
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow">Architecture de la solution</p>
+      <h2 class="section-title" id="piliers-title">Trois piliers, zéro compromis</h2>
+      <p class="section-desc">Chaque pilier est conçu pour être indépendamment robuste. Ensemble, ils créent une barrière cryptographique infranchissable contre toute tentative de falsification.</p>
+    </div>
+    <div class="three-col">
+      <div class="pillar reveal">
+        <div class="pillar-num">Pilier 01</div>
+        <span class="pillar-icon">💧</span>
+        <h3 class="pillar-title">Tatouage Numérique Invisible</h3>
+        <p class="pillar-desc">Un identifiant unique de 12 caractères est injecté dans les fréquences du document PDF via watermarking numérique. L'information est encodée de façon redondante dans plusieurs zones du document pour survivre à la compression JPEG, aux photocopies et aux photos mobiles prises en conditions réelles.</p>
+        <div class="pillar-tags">
+          <span class="badge badge-blue">OpenCV</span>
+          <span class="badge badge-blue">Stegano</span>
+          <span class="badge badge-purple">Redondant</span>
+        </div>
+      </div>
+      <div class="pillar reveal reveal-delay-1">
+        <div class="pillar-num">Pilier 02</div>
+        <span class="pillar-icon">🔐</span>
+        <h3 class="pillar-title">Hash Cryptographique SHA-256</h3>
+        <p class="pillar-desc">L'empreinte digitale unique du document est calculée via l'algorithme SHA-256. Ce hash de 64 caractères hexadécimaux est mathématiquement impossible à reproduire sans le document original. La moindre modification — même d'un bit — produit un hash totalement différent, révélant instantanément toute altération.</p>
+        <div class="pillar-tags">
+          <span class="badge badge-blue">SHA-256</span>
+          <span class="badge badge-green">Déterministe</span>
+          <span class="badge badge-purple">Collision-proof</span>
+        </div>
+      </div>
+      <div class="pillar reveal reveal-delay-2">
+        <div class="pillar-num">Pilier 03</div>
+        <span class="pillar-icon">⛓</span>
+        <h3 class="pillar-title">Ancrage Blockchain Algorand</h3>
+        <p class="pillar-desc">L'identifiant court et le hash SHA-256 sont ancrés sur la blockchain Algorand via une transaction signée cryptographiquement avec la clé privée de l'université émettrice. Ce registre est décentralisé, immuable, public et consultable gratuitement par n'importe qui dans le monde, sans intermédiaire, sans mot de passe.</p>
+        <div class="pillar-tags">
+          <span class="badge badge-cyan">Algorand PPoS</span>
+          <span class="badge badge-green">Finalité 2.8s</span>
+          <span class="badge badge-amber">0.001 ALGO</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLUX D'ÉMISSION -->
+<section class="content-section" style="background:var(--bg-0)" aria-labelledby="emission-title">
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow">Module d'émission</p>
+      <h2 class="section-title" id="emission-title">De l'université à la blockchain :<br>le flux de certification</h2>
+    </div>
+    <div class="flow reveal">
+      <div class="flow-box"><div class="flow-box-icon">📄</div><div class="flow-box-title">PDF Original</div><div class="flow-box-desc">L'université soumet le diplôme via l'interface sécurisée</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box"><div class="flow-box-icon">🔢</div><div class="flow-box-title">SHA-256</div><div class="flow-box-desc">Hash unique calculé + ID de 12 chars généré</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box"><div class="flow-box-icon">💧</div><div class="flow-box-title">Watermark</div><div class="flow-box-desc">ID injecté en fréquences du PDF (redondant)</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box"><div class="flow-box-icon">⛓</div><div class="flow-box-title">Algorand</div><div class="flow-box-desc">Transaction {id, hash} ancrée sur la blockchain</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="border-color:rgba(104,211,145,.3);background:rgba(104,211,145,.05)"><div class="flow-box-icon">📤</div><div class="flow-box-title">PDF Marqué</div><div class="flow-box-desc">Document certifié renvoyé à l'université</div></div>
+    </div>
+    <div class="two-col reveal" style="margin-top:44px">
+      <div class="prose">
+        <h3>Pourquoi le traitement en mémoire ?</h3>
+        <p>Le document n'est <strong>jamais stocké sur les serveurs</strong> de DiplomaChain. Le backend Django utilise <code style="background:rgba(66,153,225,.1);padding:2px 7px;border-radius:4px;font-size:.85em">InMemoryUploadedFile</code> pour traiter le PDF entièrement dans la RAM du serveur et le restituer immédiatement à l'université.</p>
+        <ul>
+          <li>Aucune copie du diplôme stockée côté serveur</li>
+          <li>Conformité totale avec le RGPD (données personnelles)</li>
+          <li>Temps de traitement réduit (pas d'accès disque)</li>
+          <li>Zéro risque de fuite de données sensibles</li>
+        </ul>
+        <div class="callout success">
+          <p>Seul le <strong>hash SHA-256</strong> et l'<strong>identifiant court</strong> sont publiés sur la blockchain — jamais le contenu du diplôme.</p>
+        </div>
+      </div>
+      <div class="prose">
+        <h3>L'ancrage Algorand en détail</h3>
+        <p>Chaque émission de diplôme génère une transaction Algorand contenant deux champs :</p>
+        <div style="background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px;font-family:monospace;font-size:.82rem;margin:16px 0">
+          <span style="color:var(--cyan-400)">{</span><br>
+          &nbsp;&nbsp;<span style="color:var(--blue-400)">"id"</span>: <span style="color:var(--green-400)">"DC-A4F2B9"</span>,<br>
+          &nbsp;&nbsp;<span style="color:var(--blue-400)">"hash"</span>: <span style="color:var(--green-400)">"a3f4b2c1d891e2f3..."</span>,<br>
+          &nbsp;&nbsp;<span style="color:var(--blue-400)">"issuer"</span>: <span style="color:var(--amber-400)">"univ-norbert-zongo.bf"</span><br>
+          <span style="color:var(--cyan-400)">}</span>
+        </div>
+        <p>Cette transaction est signée avec <strong>la clé privée de l'université émettrice</strong>. Il est cryptographiquement impossible de créer une transaction au nom d'un établissement sans posséder sa clé privée.</p>
+        <ul>
+          <li>Finalité absolue en 2.8 secondes (PPoS d'Algorand)</li>
+          <li>Coût : 0.001 ALGO ≈ 0.5 FCFA par diplôme certifié</li>
+          <li>Consultable publiquement sur l'explorateur Algorand</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLUX DE VÉRIFICATION -->
+<section class="content-section" style="background:var(--bg-1)" aria-labelledby="verif-title">
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow">Module de vérification</p>
+      <h2 class="section-title" id="verif-title">La vérification en temps réel :<br>3 secondes, zéro intermédiaire</h2>
+    </div>
+    <div class="flow reveal">
+      <div class="flow-box"><div class="flow-box-icon">📸</div><div class="flow-box-title">Photo / PDF</div><div class="flow-box-desc">Soumis via app mobile ou API web</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box"><div class="flow-box-icon">🔧</div><div class="flow-box-title">Prétraitement</div><div class="flow-box-desc">Redressement + filtrage pour accentuer le tatouage</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box"><div class="flow-box-icon">🔍</div><div class="flow-box-title">Extraction ID</div><div class="flow-box-desc">Récupération de l'identifiant caché</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box"><div class="flow-box-icon">⛓</div><div class="flow-box-title">Lecture BC</div><div class="flow-box-desc">Hash de référence récupéré sur Algorand</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="border-color:rgba(104,211,145,.3);background:rgba(104,211,145,.05)"><div class="flow-box-icon">✅</div><div class="flow-box-title">Verdict</div><div class="flow-box-desc">Authentique ou Falsifié en &lt;3s</div></div>
+    </div>
+    <div class="two-col" style="margin-top:44px">
+      <div class="prose reveal">
+        <h3>L'endpoint POST /api/verify/</h3>
+        <p>L'API de vérification accepte une image ou un PDF et retourne immédiatement une réponse structurée :</p>
+        <div style="background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px;font-family:monospace;font-size:.8rem;margin:16px 0;line-height:1.7">
+          <span style="color:var(--text-muted)"># Réponse si authentique</span><br>
+          <span style="color:var(--cyan-400)">{</span><br>
+          &nbsp;&nbsp;<span style="color:var(--blue-400)">"status"</span>: <span style="color:var(--green-400)">"AUTHENTIC"</span>,<br>
+          &nbsp;&nbsp;<span style="color:var(--blue-400)">"diploma_id"</span>: <span style="color:var(--green-400)">"DC-A4F2B9"</span>,<br>
+          &nbsp;&nbsp;<span style="color:var(--blue-400)">"issuer"</span>: <span style="color:var(--green-400)">"Université Norbert Zongo"</span>,<br>
+          &nbsp;&nbsp;<span style="color:var(--blue-400)">"issued_on"</span>: <span style="color:var(--green-400)">"2024-07-15"</span>,<br>
+          &nbsp;&nbsp;<span style="color:var(--blue-400)">"algo_tx"</span>: <span style="color:var(--amber-400)">"ALGO_TX_ID..."</span><br>
+          <span style="color:var(--cyan-400)">}</span>
+        </div>
+        <p>En cas de document falsifié ou non enregistré, l'API retourne <code style="background:rgba(252,129,129,.12);padding:2px 6px;border-radius:4px;color:var(--red-400)">"INVALID"</code> avec le motif de rejet.</p>
+      </div>
+      <div class="prose reveal reveal-delay-1">
+        <h3>Robustesse du watermarking</h3>
+        <p>Le tatouage numérique est conçu pour survivre aux conditions réelles :</p>
+        <ul>
+          <li>Photo prise à 30° d'angle avec un smartphone</li>
+          <li>Compression JPEG jusqu'à 40% de qualité</li>
+          <li>Photocopie noir et blanc jusqu'à 2 générations</li>
+          <li>Impression puis scan couleur</li>
+          <li>Variations de luminosité et d'éclairage</li>
+          <li>Redimensionnement jusqu'à 50% de la taille originale</li>
+        </ul>
+        <div class="callout">
+          <p>L'injection est <strong>redondante</strong> : l'identifiant est encodé dans plusieurs zones fréquentielles distinctes. La décodification réussit si au moins 60% des zones sont lisibles.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- UTILISATEURS -->
+<section class="content-section" style="background:var(--bg-0)" aria-labelledby="users-title">
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow">Utilisateurs finaux</p>
+      <h2 class="section-title" id="users-title">Conçu pour tous les acteurs<br>de l'écosystème éducatif</h2>
+    </div>
+    <div class="users-grid reveal">
+      <div class="user-card"><div class="user-icon">🎓</div><div class="user-role">Diplômés</div><div class="user-desc">Accédez à votre preuve numérique blockchain et partagez un lien de vérification avec n'importe quel recruteur dans le monde, instantanément.</div><div class="user-benefit">✓ Partage en un clic</div></div>
+      <div class="user-card"><div class="user-icon">🏢</div><div class="user-role">Recruteurs privés</div><div class="user-desc">Vérifiez n'importe quel diplôme en photographiant le document avec l'application mobile. Résultat en 3 secondes, sans abonnement, sans inscription.</div><div class="user-benefit">✓ Gratuit &amp; instantané</div></div>
+      <div class="user-card"><div class="user-icon">⚖️</div><div class="user-role">Jurys de concours publics</div><div class="user-desc">Éliminez les 25 à 30% de dossiers frauduleux dès la présélection. Chaque vérification est tracée et constitue une preuve juridique opposable.</div><div class="user-benefit">✓ Preuve juridique</div></div>
+      <div class="user-card"><div class="user-icon">🏛️</div><div class="user-role">Universités</div><div class="user-desc">Émettez des diplômes certifiés via votre portail sécurisé. Votre réputation est protégée : seules les universités avec une clé accréditée peuvent émettre en votre nom.</div><div class="user-benefit">✓ Réputation protégée</div></div>
+      <div class="user-card"><div class="user-icon">✈️</div><div class="user-role">Ambassades &amp; Consulats</div><div class="user-desc">Vérifiez les diplômes burkinabè présentés pour des visas ou des reconnaissances académiques à l'étranger, sans contacter l'université directement.</div><div class="user-benefit">✓ Vérif internationale</div></div>
+      <div class="user-card"><div class="user-icon">🌍</div><div class="user-role">Entreprises multinationales</div><div class="user-desc">Recrutez des talents burkinabè avec la certitude de leurs qualifications. DiplomaChain est compatible avec les standards internationaux de vérification.</div><div class="user-benefit">✓ Standard universel</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ALGORAND SECTION -->
+<section class="content-section" style="background:var(--bg-1)" aria-labelledby="algo-title">
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow">Pourquoi Algorand ?</p>
+      <h2 class="section-title" id="algo-title">Le réseau blockchain idéal<br>pour les diplômes africains</h2>
+    </div>
+    <div class="algo-box reveal" style="margin-bottom:44px">
+      <div style="font-size:2.5rem;margin-bottom:20px">⛓</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:20px">Performances Algorand 2024</h3>
+      <div>
+        <div class="algo-metric"><div class="algo-metric-val">5 716</div><div class="algo-metric-lbl">TPS maximum en 2024</div></div>
+        <div class="algo-metric"><div class="algo-metric-val">2.8s</div><div class="algo-metric-lbl">Temps de finalité</div></div>
+        <div class="algo-metric"><div class="algo-metric-val">0.001</div><div class="algo-metric-lbl">ALGO par transaction</div></div>
+        <div class="algo-metric"><div class="algo-metric-val">0%</div><div class="algo-metric-lbl">Forks possibles (PPoS)</div></div>
+      </div>
+    </div>
+    <div class="two-col reveal">
+      <div class="prose">
+        <h3>Finalité absolue, zéro fork</h3>
+        <p>Algorand utilise l'algorithme <strong>Pure Proof-of-Stake (PPoS)</strong>. Contrairement aux blockchains à preuve de travail, une transaction Algorand est <strong>définitivement confirmée</strong> dès son inclusion dans un bloc, sans risque de réorganisation (fork).</p>
+        <p>Pour un registre de diplômes, c'est fondamental : il ne doit jamais être possible d'annuler ou réécrire un enregistrement passé. Algorand est la seule blockchain de niveau 1 à garantir cette propriété de manière absolue.</p>
+        <ul>
+          <li>Utilisé par des gouvernements pour les registres fonciers</li>
+          <li>Choisi par des institutions financières mondiales</li>
+          <li>Éco-responsable (consensus PPoS, faible énergie)</li>
+          <li>Compatible avec le droit burkinabè sur les preuves électroniques</li>
+        </ul>
+      </div>
+      <div class="prose">
+        <h3>Signature par clé privée : l'arme anticontrefaçon</h3>
+        <p>La sécurité fondamentale repose sur la <strong>cryptographie à clé asymétrique</strong>. Chaque université accréditée dispose d'une paire de clés :</p>
+        <ul>
+          <li><strong>Clé privée</strong> — stockée dans un fichier .env sécurisé, jamais exposée, non stockée sur le serveur DiplomaChain</li>
+          <li><strong>Clé publique</strong> — enregistrée dans le registre DipIomaChain et associée à l'établissement</li>
+        </ul>
+        <div class="callout success">
+          <p><strong>Sans la clé privée d'une université, il est cryptographiquement impossible d'enregistrer un diplôme en son nom.</strong> Même un attaquant ayant accès au serveur DiplomaChain ne peut pas émettre de faux diplômes.</p>
+        </div>
+        <p>Ce modèle est identique à celui utilisé pour sécuriser les transactions bancaires internationales.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT ATTENDU -->
+<section class="content-section" style="background:var(--bg-0)" aria-labelledby="impact-title">
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow">Impact attendu</p>
+      <h2 class="section-title" id="impact-title">Ce que DiplomaChain va changer<br>au Burkina Faso</h2>
+    </div>
+    <div class="impact-row reveal">
+      <div class="imp"><div class="imp-icon">🏥</div><div class="imp-title">Élimination des faux professionnels</div><div class="imp-desc">Faux médecins, enseignants et ingénieurs détectés dès le recrutement, avant qu'ils n'exercent dans des postes à risque.</div></div>
+      <div class="imp"><div class="imp-icon">💼</div><div class="imp-title">Valorisation des diplômés légitimes</div><div class="imp-desc">Les vrais diplômés burkinabè bénéficient d'une preuve infalsifiable de leurs qualifications, reconnue internationalement.</div></div>
+      <div class="imp"><div class="imp-icon">🌍</div><div class="imp-title">Export des talents burkinabè</div><div class="imp-desc">Le Burkina Faso peut exporter ses compétences avec des preuves vérifiables par tout employeur étranger sans délai.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Navigation -->
+<section style="padding:60px 0;background:var(--bg-1)">
+  <div class="section-container">
+    <div class="next-page-card reveal">
+      <div style="font-size:2.5rem;margin-bottom:14px">⚙️</div>
+      <h3>Curieux du fonctionnement technique ?</h3>
+      <p>Découvrez en détail les flux d'émission et de vérification, avec les endpoints API, les schémas de données et les algorithmes utilisés.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <a href="{% url 'comment' %}" class="btn btn-primary">Voir le fonctionnement →</a>
+        <a href="{% url 'technologie' %}" class="btn btn-secondary">Stack technologique</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,327 @@
+{% extends 'landing_page/base.html' %}
+{% load static %}
+{% block title %}Stack Technologique — DiplomaChain{% endblock %}
+{% block meta_desc %}Architecture technique de DiplomaChain : Django DRF, Algorand SDK, SHA-256, OpenCV watermarking, Flutter mobile, sécurité Ed25519 et conformité RGPD.{% endblock %}
+
+{% block extra_css %}
+<style>
+.content-section{padding:80px 0}
+.prose h3{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;margin:26px 0 10px}
+.prose p{font-size:.9rem;color:var(--text-secondary);line-height:1.8;margin-bottom:14px}
+.prose strong{color:var(--text-primary)}
+.prose ul{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.prose ul li{font-size:.875rem;color:var(--text-secondary);display:flex;align-items:flex-start;gap:8px;line-height:1.6}
+.prose ul li::before{content:'›';color:var(--blue-400);font-weight:700;flex-shrink:0}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
+/* Tech deep-dive cards */
+.tech-block{background:var(--gradient-card);border:1px solid var(--border);border-radius:var(--radius-xl);padding:36px;margin-bottom:28px;transition:var(--transition);position:relative;overflow:hidden}
+.tech-block::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px}
+.tech-block.blue::before{background:linear-gradient(to bottom,var(--blue-500),var(--cyan-500))}
+.tech-block.green::before{background:linear-gradient(to bottom,var(--green-400),var(--green-500))}
+.tech-block.purple::before{background:linear-gradient(to bottom,var(--purple-400),#6b46c1)}
+.tech-block.amber::before{background:linear-gradient(to bottom,var(--amber-400),#c05621)}
+.tech-block.red::before{background:linear-gradient(to bottom,var(--red-400),#c53030)}
+.tech-block.cyan::before{background:linear-gradient(to bottom,var(--cyan-400),var(--cyan-500))}
+.tech-block:hover{border-color:var(--border-glow);transform:translateX(4px)}
+.tech-block-header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.tech-block-icon{width:56px;height:56px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.7rem;flex-shrink:0}
+.tech-block-icon.blue{background:rgba(66,153,225,.12);border:1px solid rgba(66,153,225,.25)}
+.tech-block-icon.green{background:rgba(104,211,145,.12);border:1px solid rgba(104,211,145,.25)}
+.tech-block-icon.purple{background:rgba(183,148,244,.12);border:1px solid rgba(183,148,244,.25)}
+.tech-block-icon.amber{background:rgba(246,173,85,.12);border:1px solid rgba(246,173,85,.25)}
+.tech-block-icon.red{background:rgba(252,129,129,.12);border:1px solid rgba(252,129,129,.25)}
+.tech-block-icon.cyan{background:rgba(11,197,234,.12);border:1px solid rgba(11,197,234,.25)}
+.tech-block-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.2rem;margin-bottom:3px}
+.tech-block-version{font-size:.75rem;color:var(--text-muted)}
+.tech-block-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px}
+/* Architecture diagram */
+.arch-diagram{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:var(--radius-xl);padding:32px;margin:36px 0}
+.arch-row{display:flex;align-items:center;gap:0;margin:12px 0;flex-wrap:wrap}
+.arch-box{background:var(--gradient-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 18px;text-align:center;flex:1;min-width:110px;transition:var(--transition)}
+.arch-box:hover{border-color:var(--border-glow)}
+.arch-box-label{font-size:.75rem;color:var(--text-muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em}
+.arch-box-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.85rem}
+.arch-arrow{font-size:1.2rem;color:var(--blue-500);opacity:.45;padding:0 8px;flex-shrink:0}
+.arch-layer{margin:20px 0}
+.arch-layer-label{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--blue-400);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.arch-layer-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--blue-400),transparent)}
+/* Security section */
+.security-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.sec-card{background:var(--gradient-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;text-align:center;transition:var(--transition)}
+.sec-card:hover{border-color:var(--border-glow);transform:translateY(-4px)}
+.sec-icon{font-size:2rem;margin-bottom:10px}
+.sec-title{font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:7px;font-size:.9rem}
+.sec-desc{font-size:.8rem;color:var(--text-secondary);line-height:1.65}
+/* Perf metrics */
+.perf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.perf-item{background:var(--gradient-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;text-align:center;transition:var(--transition)}
+.perf-item:hover{border-color:var(--border-glow);transform:translateY(-4px)}
+.perf-val{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;font-weight:800;background:var(--gradient-accent);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.perf-lbl{font-size:.75rem;color:var(--text-secondary)}
+.next-page-card{background:var(--gradient-card);border:1px solid var(--border-glow);border-radius:var(--radius-lg);padding:32px;text-align:center;margin-top:60px}
+.next-page-card h3{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;margin-bottom:10px}
+.next-page-card p{color:var(--text-secondary);font-size:.9rem;margin-bottom:22px}
+@media(max-width:900px){.two-col{grid-template-columns:1fr}.security-grid{grid-template-columns:1fr 1fr}.perf-grid{grid-template-columns:1fr 1fr}.arch-row{flex-direction:column}.arch-arrow{transform:rotate(90deg)}}
+@media(max-width:600px){.security-grid,.perf-grid{grid-template-columns:1fr}}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-hero" aria-labelledby="page-title">
+  <div class="page-hero-grid" aria-hidden="true"></div>
+  <div class="page-hero-orb" style="background:radial-gradient(circle,rgba(104,211,145,.25),transparent)" aria-hidden="true"></div>
+  <div class="section-container page-hero-content">
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{% url 'home' %}">Accueil</a><span>›</span>
+      <span class="current">Technologies</span>
+    </nav>
+    <div class="badge badge-green" style="margin-bottom:20px">🛠️ Stack de production</div>
+    <h1 class="page-title" id="page-title">Architecture <span class="accent">technique</span><br>de DiplomaChain</h1>
+    <p class="page-lead">Chaque technologie a été choisie pour une raison précise : sécurité, performance, conformité ou robustesse. Voici l'architecture complète, sans compromis.</p>
+  </div>
+</div>
+
+<!-- ARCHITECTURE DIAGRAM -->
+<section class="content-section" style="background:var(--bg-1)" aria-labelledby="arch-title">
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow">Vue d'ensemble</p>
+      <h2 class="section-title" id="arch-title">Architecture système en couches</h2>
+    </div>
+    <div class="arch-diagram reveal">
+      <div class="arch-layer">
+        <div class="arch-layer-label">🎯 Couche Présentation (Clients)</div>
+        <div class="arch-row">
+          <div class="arch-box"><div class="arch-box-label">Université</div><div class="arch-box-name">🏫 Portail Web</div></div>
+          <div class="arch-arrow">↔</div>
+          <div class="arch-box"><div class="arch-box-label">Recruteur</div><div class="arch-box-name">📱 App Flutter</div></div>
+          <div class="arch-arrow">↔</div>
+          <div class="arch-box"><div class="arch-box-label">Diplômé</div><div class="arch-box-name">🎓 Interface Web</div></div>
+          <div class="arch-arrow">↔</div>
+          <div class="arch-box"><div class="arch-box-label">Tiers</div><div class="arch-box-name">🔌 REST API</div></div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:1.5rem;color:var(--blue-500);opacity:.4;margin:6px 0">↕</div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">⚙️ Couche Backend (Django)</div>
+        <div class="arch-row">
+          <div class="arch-box" style="border-color:rgba(66,153,225,.3)"><div class="arch-box-label">Auth</div><div class="arch-box-name">🔐 Token DRF</div></div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box" style="border-color:rgba(66,153,225,.3)"><div class="arch-box-label">Processing</div><div class="arch-box-name">💧 Watermark</div></div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box" style="border-color:rgba(66,153,225,.3)"><div class="arch-box-label">Crypto</div><div class="arch-box-name">🔢 SHA-256</div></div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box" style="border-color:rgba(66,153,225,.3)"><div class="arch-box-label">Signing</div><div class="arch-box-name">✍️ Ed25519</div></div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:1.5rem;color:var(--cyan-500);opacity:.4;margin:6px 0">↕</div>
+      <div class="arch-layer">
+        <div class="arch-layer-label" style="color:var(--cyan-400)">⛓ Couche Blockchain (Algorand)</div>
+        <div class="arch-row">
+          <div class="arch-box" style="border-color:rgba(11,197,234,.3)"><div class="arch-box-label">Réseau</div><div class="arch-box-name">🌐 Algorand PPoS</div></div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box" style="border-color:rgba(11,197,234,.3)"><div class="arch-box-label">Stockage</div><div class="arch-box-name">📦 Smart Contract</div></div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box" style="border-color:rgba(11,197,234,.3)"><div class="arch-box-label">Lecture</div><div class="arch-box-name">🔍 Algorand Indexer</div></div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-box" style="border-color:rgba(11,197,234,.3)"><div class="arch-box-label">Public</div><div class="arch-box-name">🌍 Explorateur</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH BLOCKS DÉTAILLÉS -->
+<section class="content-section" style="background:var(--bg-0)" aria-labelledby="stack-title">
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow">Composants détaillés</p>
+      <h2 class="section-title" id="stack-title">Chaque technologie, justifiée</h2>
+    </div>
+    <div class="two-col">
+      <div>
+        <!-- Django -->
+        <div class="tech-block blue reveal">
+          <div class="tech-block-header">
+            <div class="tech-block-icon blue">🐍</div>
+            <div><div class="tech-block-title">Django 5.x + Django REST Framework</div><div class="tech-block-version">Python 3.12 · DRF 3.15</div></div>
+          </div>
+          <div class="prose">
+            <p>Le backend REST de DiplomaChain. DRF fournit le système d'authentification par token pour les universités. Django orchestre les deux modules principaux : certification (émission) et vérification.</p>
+            <ul>
+              <li>Traitement en mémoire (<code style="color:var(--cyan-400)">InMemoryUploadedFile</code>) — aucun diplôme stocké sur disque</li>
+              <li>Sérialisation et validation des données entrantes avec DRF Serializers</li>
+              <li>Gestion des exceptions API structurée (codes d'erreur normalisés)</li>
+              <li>Logging sécurisé des actions d'émission (audit trail)</li>
+            </ul>
+          </div>
+          <div class="tech-block-tags">
+            <span class="badge badge-blue">Python 3.12</span><span class="badge badge-blue">DRF 3.15</span>
+            <span class="badge badge-green">RGPD-Compliant</span><span class="badge badge-amber">Token Auth</span>
+          </div>
+        </div>
+
+        <!-- Watermarking -->
+        <div class="tech-block purple reveal reveal-delay-1">
+          <div class="tech-block-header">
+            <div class="tech-block-icon purple">💧</div>
+            <div><div class="tech-block-title">Watermarking Numérique (OpenCV + Stegano)</div><div class="tech-block-version">OpenCV 4.x · Stegano 0.11</div></div>
+          </div>
+          <div class="prose">
+            <p>Le tatouage numérique invisible est la clé de la vérification physique. L'identifiant est encodé dans les <strong>fréquences spatiales basses</strong> du document via la transformée DCT (Discrete Cosine Transform), une technique éprouvée issue du standard JPEG.</p>
+            <ul>
+              <li>Redondance ×8 : injection dans 8 zones différentes du document</li>
+              <li>Robustesse testée à 40% de compression JPEG, rotation 30°, et photocopie</li>
+              <li>Le décodage utilise un <strong>vote majoritaire</strong> : succès si 60% des zones sont lisibles</li>
+              <li>Prétraitement des images à la vérification : CLAHE, homographie, débruitage</li>
+            </ul>
+          </div>
+          <div class="tech-block-tags">
+            <span class="badge badge-purple">OpenCV 4.x</span><span class="badge badge-purple">DCT Watermark</span>
+            <span class="badge badge-blue">CLAHE</span><span class="badge badge-amber">Redondance ×8</span>
+          </div>
+        </div>
+
+        <!-- Flutter -->
+        <div class="tech-block green reveal reveal-delay-2">
+          <div class="tech-block-header">
+            <div class="tech-block-icon green">📱</div>
+            <div><div class="tech-block-title">Flutter (Application Mobile)</div><div class="tech-block-version">Flutter 3.x · Dart 3.x</div></div>
+          </div>
+          <div class="prose">
+            <p>L'application mobile cross-platform pour iOS et Android. Les recruteurs et jurys de concours peuvent vérifier n'importe quel diplôme en le photographiant — résultat en 3 secondes.</p>
+            <ul>
+              <li>Interface épurée — aucune connaissance technique requise</li>
+              <li>Accès caméra natif pour capture en temps réel</li>
+              <li>Envoi du fichier à l'API REST via <code style="color:var(--cyan-400)">multipart/form-data</code></li>
+              <li>Affichage du verdict avec les métadonnées blockchain (université, date, TX Algorand)</li>
+              <li>Mode hors ligne : mise en cache des vérifications récentes</li>
+            </ul>
+          </div>
+          <div class="tech-block-tags">
+            <span class="badge badge-green">Flutter 3.x</span><span class="badge badge-green">Dart</span>
+            <span class="badge badge-blue">iOS + Android</span><span class="badge badge-purple">Multipart REST</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <!-- Algorand -->
+        <div class="tech-block cyan reveal">
+          <div class="tech-block-header">
+            <div class="tech-block-icon cyan">⛓</div>
+            <div><div class="tech-block-title">Blockchain Algorand</div><div class="tech-block-version">Algorand SDK Python 2.x</div></div>
+          </div>
+          <div class="prose">
+            <p>Algorand est le réseau blockchain retenu pour ses propriétés uniques adaptées aux registres officiels : <strong>finalité absolue, absence de forks, faible coût et très haute vitesse</strong>.</p>
+            <ul>
+              <li>Pure Proof-of-Stake (PPoS) — finalité en 2.8 secondes, sans risque de réorganisation</li>
+              <li>5 716 TPS maximum en 2024 — scalable pour des millions de diplômes</li>
+              <li>Coût par transaction : 0.001 ALGO ≈ 0.5 FCFA — quasi gratuit pour les universités</li>
+              <li>Utilisé par des gouvernements (République de Marshall Islands, Italie) pour des registres officiels</li>
+              <li>Explorateur public : tout enregistrement est consultable sans compte</li>
+            </ul>
+          </div>
+          <div class="tech-block-tags">
+            <span class="badge badge-cyan">PPoS</span><span class="badge badge-blue">5716 TPS</span>
+            <span class="badge badge-green">Finalité 2.8s</span><span class="badge badge-amber">0.001 ALGO/tx</span>
+          </div>
+        </div>
+
+        <!-- Cryptographie -->
+        <div class="tech-block amber reveal reveal-delay-1">
+          <div class="tech-block-header">
+            <div class="tech-block-icon amber">🔐</div>
+            <div><div class="tech-block-title">Sécurité Cryptographique</div><div class="tech-block-version">SHA-256 · Ed25519 · .env Vault</div></div>
+          </div>
+          <div class="prose">
+            <p>La sécurité repose sur deux primitives cryptographiques éprouvées et complémentaires :</p>
+            <ul>
+              <li><strong>SHA-256</strong> — Algorithme de hachage (famille SHA-2) produisant une empreinte de 256 bits. Résistant à toutes les attaques connues par collision. Utilisé dans Bitcoin, TLS, et les certificats X.509.</li>
+              <li><strong>Ed25519</strong> — Algorithme de signature à courbe elliptique utilisé par Algorand. Chaque université dispose d'une paire (clé privée / clé publique). La clé privée est stockée dans un fichier <code style="color:var(--cyan-400)">.env</code> non commité.</li>
+              <li>Les clés privées ne sont <strong>jamais envoyées ou stockées côté serveur DiplomaChain</strong></li>
+              <li>Modèle Zero-Trust : même un administrateur DiplomaChain ne peut pas forger de diplôme</li>
+            </ul>
+          </div>
+          <div class="tech-block-tags">
+            <span class="badge badge-amber">SHA-256</span><span class="badge badge-amber">Ed25519</span>
+            <span class="badge badge-red">Zero-Trust</span><span class="badge badge-blue">.env Vault</span>
+          </div>
+        </div>
+
+        <!-- IA Imaging -->
+        <div class="tech-block red reveal reveal-delay-2">
+          <div class="tech-block-header">
+            <div class="tech-block-icon red">🧠</div>
+            <div><div class="tech-block-title">Pipeline de Vision par Ordinateur</div><div class="tech-block-version">OpenCV 4.x · Pillow · NumPy</div></div>
+          </div>
+          <div class="prose">
+            <p>La robustesse du système de vérification face aux conditions réelles (photos obliques, mauvais éclairage) repose sur un pipeline de prétraitement d'image en plusieurs étapes :</p>
+            <ul>
+              <li><strong>Détection des contours</strong> du document dans la photo (algorithme de Canny)</li>
+              <li><strong>Correction de perspective</strong> via transformation homographique (redressement)</li>
+              <li><strong>Amélioration du contraste</strong> adaptative (CLAHE — Contrast Limited Adaptive Histogram Equalization)</li>
+              <li><strong>Débruitage gaussien</strong> pour réduire le bruit des capteurs photo mobiles</li>
+              <li><strong>Normalisation</strong> de la résolution avant extraction du tatouage</li>
+            </ul>
+          </div>
+          <div class="tech-block-tags">
+            <span class="badge badge-red">Canny Edge</span><span class="badge badge-red">Homographie</span>
+            <span class="badge badge-amber">CLAHE</span><span class="badge badge-purple">NumPy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PERFORMANCES -->
+<section class="content-section" style="background:var(--bg-1)" aria-labelledby="perf-title">
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow">Performances cibles</p>
+      <h2 class="section-title" id="perf-title">Conçu pour passer à l'échelle<br>de toute une nation</h2>
+    </div>
+    <div class="perf-grid reveal">
+      <div class="perf-item"><div class="perf-val">&lt;3s</div><div class="perf-lbl">Temps de vérification bout en bout</div></div>
+      <div class="perf-item"><div class="perf-val">0 FCFA</div><div class="perf-lbl">Coût de vérification pour le recruteur</div></div>
+      <div class="perf-item"><div class="perf-val">~0.5</div><div class="perf-lbl">FCFA par émission de diplôme certifié</div></div>
+      <div class="perf-item"><div class="perf-val">100%</div><div class="perf-lbl">Immuabilité — aucune transaction ne peut être effacée</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SÉCURITÉ -->
+<section class="content-section" style="background:var(--bg-0)" aria-labelledby="secu-title">
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow">Sécurité</p>
+      <h2 class="section-title" id="secu-title">Modèle de sécurité Zero-Trust</h2>
+      <p class="section-desc">DiplomaChain est conçu pour qu'aucune compromission du serveur ne puisse permettre la création de faux diplômes.</p>
+    </div>
+    <div class="security-grid reveal">
+      <div class="sec-card"><div class="sec-icon">🔑</div><div class="sec-title">Clés privées hors serveur</div><div class="sec-desc">Les clés privées des universités ne sont jamais envoyées à DiplomaChain. Elles restent sur les systèmes de l'établissement, dans un fichier .env sécurisé.</div></div>
+      <div class="sec-card"><div class="sec-icon">🗂️</div><div class="sec-title">Données traitées en mémoire</div><div class="sec-desc">Aucun diplôme n'est jamais écrit sur le disque du serveur. Traitement 100% RAM — conformité totale avec le RGPD sur les données personnelles.</div></div>
+      <div class="sec-card"><div class="sec-icon">⛓</div><div class="sec-title">Registre décentralisé</div><div class="sec-desc">Le registre de référence est sur Algorand, pas sur les serveurs de DiplomaChain. Même si DiplomaChain disparaît, toutes les transactions restent consultables.</div></div>
+      <div class="sec-card"><div class="sec-icon">🔏</div><div class="sec-title">Signature non reproductible</div><div class="sec-desc">Sans la clé privée d'un établissement, il est cryptographiquement impossible d'enregistrer un diplôme en son nom. Aucune permission admin ne peut contourner cela.</div></div>
+      <div class="sec-card"><div class="sec-icon">📋</div><div class="sec-title">Audit trail complet</div><div class="sec-desc">Toutes les actions d'émission sont journalisées avec timestamp, adresse IP et identifiant de l'université. La blockchain elle-même constitue un deuxième audit immutable.</div></div>
+      <div class="sec-card"><div class="sec-icon">🌐</div><div class="sec-title">Vérification publique</div><div class="sec-desc">N'importe qui dans le monde peut consulter les transactions sur l'explorateur Algorand public — sans compte, sans API key, sans intermédiaire.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="padding:60px 0;background:var(--bg-1)">
+  <div class="section-container">
+    <div class="next-page-card reveal">
+      <div style="font-size:2.5rem;margin-bottom:14px">🚀</div>
+      <h3>Vous êtes développeur ou porteur de projet ?</h3>
+      <p>DiplomaChain cherche des partenaires techniques et institutionnels pour déployer la solution dans les universités burkinabè. Contactez-nous pour une démo ou une intégration pilote.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <a href="{% url 'home' %}#contact" class="btn btn-primary">Rejoindre le projet →</a>
+        <a href="{% url 'comment' %}" class="btn btn-secondary">Voir l'API REST</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

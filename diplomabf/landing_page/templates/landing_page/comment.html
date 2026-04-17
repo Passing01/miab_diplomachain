@@ -1,0 +1,352 @@
+{% extends 'landing_page/base.html' %}
+{% load static %}
+{% block title %}Comment ça marche — DiplomaChain{% endblock %}
+{% block meta_desc %}Fonctionnement détaillé de DiplomaChain : émission d'un diplôme certifié blockchain, vérification par photo, prétraitement IA et endpoints API REST.{% endblock %}
+
+{% block extra_css %}
+<style>
+.content-section{padding:80px 0}
+.prose h3{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;margin:26px 0 10px}
+.prose p{font-size:.9rem;color:var(--text-secondary);line-height:1.8;margin-bottom:14px}
+.prose strong{color:var(--text-primary)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
+/* Steps detailed */
+.steps-detailed{display:flex;flex-direction:column;gap:0}
+.step-d{display:flex;gap:24px;position:relative;padding-bottom:36px}
+.step-d:last-child{padding-bottom:0}
+.step-d-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.step-d-num{width:52px;height:52px;background:var(--gradient-accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:1rem;flex-shrink:0;box-shadow:0 0 22px rgba(66,153,225,.4)}
+.step-d-line{flex:1;width:2px;background:linear-gradient(to bottom,var(--blue-500),transparent);margin-top:8px}
+.step-d-body{flex:1;padding-bottom:16px}
+.step-d-icon{font-size:1.8rem;margin-bottom:10px}
+.step-d-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1rem;margin-bottom:8px}
+.step-d-desc{font-size:.875rem;color:var(--text-secondary);line-height:1.75}
+.step-d-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+/* Code block */
+.code-block{background:rgba(0,0,0,.45);border:1px solid var(--border);border-radius:var(--radius-md);padding:20px;font-family:monospace;font-size:.8rem;line-height:1.8;margin:16px 0;overflow-x:auto}
+.code-block .k{color:var(--blue-400)}.code-block .s{color:var(--green-400)}.code-block .c{color:var(--text-muted)}.code-block .n{color:var(--amber-400)}.code-block .p{color:var(--cyan-400)}
+/* API endpoints */
+.endpoint{background:var(--gradient-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;margin-bottom:18px;transition:var(--transition)}
+.endpoint:hover{border-color:var(--border-glow)}
+.endpoint-method{display:inline-flex;align-items:center;gap:8px;margin-bottom:12px}
+.method-badge{font-size:.72rem;font-weight:800;padding:4px 10px;border-radius:6px;font-family:monospace}
+.method-post{background:rgba(104,211,145,.15);color:var(--green-400);border:1px solid rgba(104,211,145,.3)}
+.method-get{background:rgba(66,153,225,.15);color:var(--blue-400);border:1px solid rgba(66,153,225,.3)}
+.endpoint-path{font-family:monospace;font-size:.9rem;color:var(--text-primary)}
+.endpoint-desc{font-size:.85rem;color:var(--text-secondary);margin:8px 0 14px}
+.param-table{width:100%;border-collapse:collapse}
+.param-table th{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);padding:6px 10px;text-align:left;border-bottom:1px solid var(--border)}
+.param-table td{font-size:.82rem;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text-secondary)}
+.param-table td:first-child{font-family:monospace;color:var(--cyan-400)}
+.param-req{font-size:.68rem;font-weight:700;color:var(--red-400)}
+.param-opt{font-size:.68rem;font-weight:700;color:var(--text-muted)}
+/* Tabs */
+.tabs-container{max-width:520px;margin:0 auto 44px;background:var(--bg-1);border:1px solid var(--border);border-radius:var(--radius-md);padding:4px;display:flex}
+.tab-btn{flex:1;padding:11px 18px;border:none;background:transparent;color:var(--text-secondary);font-family:'Inter',sans-serif;font-size:.85rem;font-weight:600;border-radius:calc(var(--radius-md) - 4px);cursor:pointer;transition:var(--transition);display:flex;align-items:center;justify-content:center;gap:7px}
+.tab-btn.active{background:var(--gradient-accent);color:#fff;box-shadow:0 4px 18px rgba(66,153,225,.3)}
+.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeInUp .35s ease}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+/* Algo check */
+.check-demo{background:var(--gradient-card);border:1px solid var(--border);border-radius:var(--radius-xl);padding:32px;text-align:center}
+.check-input{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.check-input input{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 16px;color:var(--text-primary);font-family:monospace;font-size:.85rem;min-width:200px}
+.check-input input:focus{outline:none;border-color:var(--blue-400)}
+.check-result{display:none;background:rgba(104,211,145,.07);border:1px solid rgba(104,211,145,.25);border-radius:var(--radius-md);padding:20px}
+.check-result.show{display:block;animation:fadeInUp .4s ease}
+.result-status{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:800;color:var(--green-400);margin-bottom:12px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left}
+.result-item label{font-size:.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em}
+.result-item p{font-size:.85rem;color:var(--text-primary);font-family:monospace;margin-top:3px}
+.next-page-card{background:var(--gradient-card);border:1px solid var(--border-glow);border-radius:var(--radius-lg);padding:32px;text-align:center;margin-top:60px}
+.next-page-card h3{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;font-weight:700;margin-bottom:10px}
+.next-page-card p{color:var(--text-secondary);font-size:.9rem;margin-bottom:22px}
+@media(max-width:900px){.two-col{grid-template-columns:1fr}.result-grid{grid-template-columns:1fr}}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-hero" aria-labelledby="page-title">
+  <div class="page-hero-grid" aria-hidden="true"></div>
+  <div class="page-hero-orb" style="background:radial-gradient(circle,rgba(183,148,244,.28),transparent)" aria-hidden="true"></div>
+  <div class="section-container page-hero-content">
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{% url 'home' %}">Accueil</a><span>›</span>
+      <span class="current">Fonctionnement</span>
+    </nav>
+    <div class="badge badge-purple" style="margin-bottom:20px">⚙️ Documentation technique</div>
+    <h1 class="page-title" id="page-title">Fonctionnement<br><span class="accent">étape par étape</span></h1>
+    <p class="page-lead">De l'upload du diplôme à l'ancrage blockchain, puis de la photo du recruteur au verdict en 3 secondes — voici le flux complet de DiplomaChain, sans boite noire.</p>
+  </div>
+</div>
+
+<!-- TABS ÉMISSION / VÉRIFICATION -->
+<section class="content-section" style="background:var(--bg-1)" aria-labelledby="flux-title">
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow">Deux flux complémentaires</p>
+      <h2 class="section-title" id="flux-title">Le cycle complet d'un diplôme<br>sur DiplomaChain</h2>
+    </div>
+    <div class="tabs-container reveal" role="tablist">
+      <button class="tab-btn active" data-panel="tab-emission" role="tab">🎓 Émission</button>
+      <button class="tab-btn" data-panel="tab-verification" role="tab">🔍 Vérification</button>
+      <button class="tab-btn" data-panel="tab-api" role="tab">🔌 API REST</button>
+    </div>
+
+    <!-- ÉMISSION -->
+    <div class="tab-panel active" id="tab-emission">
+      <div class="two-col">
+        <div class="steps-detailed reveal">
+          <div class="step-d">
+            <div class="step-d-left"><div class="step-d-num">1</div><div class="step-d-line"></div></div>
+            <div class="step-d-body">
+              <div class="step-d-icon">🏫</div>
+              <div class="step-d-title">Authentification de l'université</div>
+              <div class="step-d-desc">L'université se connecte à son portail DiplomaChain avec ses identifiants. L'authentification repose sur un <strong>token DRF</strong> généré lors de l'accré­ditation. Sans ce token valide, aucune émission n'est possible.</div>
+              <div class="step-d-tags"><span class="badge badge-blue">Token Auth</span><span class="badge badge-purple">DRF</span></div>
+            </div>
+          </div>
+          <div class="step-d">
+            <div class="step-d-left"><div class="step-d-num">2</div><div class="step-d-line"></div></div>
+            <div class="step-d-body">
+              <div class="step-d-icon">📄</div>
+              <div class="step-d-title">Upload du PDF original</div>
+              <div class="step-d-desc">Le diplôme est soumis via un formulaire sécurisé. Django le reçoit en tant qu'<strong>InMemoryUploadedFile</strong> — il n'est jamais écrit sur le disque. Le fichier reste dans la RAM pendant toute la durée du traitement.</div>
+              <div class="step-d-tags"><span class="badge badge-green">InMemory</span><span class="badge badge-blue">RGPD</span></div>
+            </div>
+          </div>
+          <div class="step-d">
+            <div class="step-d-left"><div class="step-d-num">3</div><div class="step-d-line"></div></div>
+            <div class="step-d-body">
+              <div class="step-d-icon">🔢</div>
+              <div class="step-d-title">Génération du Hash SHA-256</div>
+              <div class="step-d-desc">Le backend calcule l'empreinte <strong>SHA-256</strong> du fichier PDF (64 caractères hexadécimaux). Un identifiant court de 12 caractères (ex: <code style="color:var(--cyan-400)">DC-A4F2B9</code>) est généré de façon unique et vérifiée contre les doublons.</div>
+              <div class="step-d-tags"><span class="badge badge-amber">SHA-256</span><span class="badge badge-blue">UUID collision-proof</span></div>
+            </div>
+          </div>
+          <div class="step-d">
+            <div class="step-d-left"><div class="step-d-num">4</div><div class="step-d-line"></div></div>
+            <div class="step-d-body">
+              <div class="step-d-icon">💧</div>
+              <div class="step-d-title">Injection du tatouage invisible</div>
+              <div class="step-d-desc">L'identifiant court est encodé dans les <strong>fréquences spatiales basses</strong> du document PDF via OpenCV et stegano. L'injection est répétée dans 8 zones distinctes du document pour assurer la redondance et la robustesse face aux transformations.</div>
+              <div class="step-d-tags"><span class="badge badge-purple">OpenCV</span><span class="badge badge-purple">Stegano</span><span class="badge badge-blue">Redondance ×8</span></div>
+            </div>
+          </div>
+          <div class="step-d">
+            <div class="step-d-left"><div class="step-d-num">5</div></div>
+            <div class="step-d-body">
+              <div class="step-d-icon">⛓</div>
+              <div class="step-d-title">Ancrage sur Algorand + retour du PDF</div>
+              <div class="step-d-desc">Une transaction Algorand est construite avec les champs <code style="color:var(--cyan-400)">{id, hash, issuer}</code> et signée avec la <strong>clé privée de l'université</strong> (depuis le fichier .env). La trasnaction est diffusée — finalité en 2.8s. Le PDF tatoué est renvoyé à l'université, prêt à être remis au diplômé.</div>
+              <div class="step-d-tags"><span class="badge badge-cyan">Algorand PPoS</span><span class="badge badge-amber">Ed25519</span><span class="badge badge-green">Finalité 2.8s</span></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="check-demo reveal reveal-delay-1">
+            <h4 style="font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:16px">📋 Données d'une transaction d'émission</h4>
+            <div class="code-block">
+<span class="c"># Transaction Algorand signée</span><br>
+<span class="k">txn_data</span> = {<br>
+&nbsp;&nbsp;<span class="s">"type"</span>: <span class="s">"appl"</span>,<br>
+&nbsp;&nbsp;<span class="s">"sender"</span>: <span class="n">university_address</span>,<br>
+&nbsp;&nbsp;<span class="s">"note"</span>: json.dumps({<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"id"</span>: <span class="s">"DC-A4F2B9"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"hash"</span>: <span class="s">"a3f4b2c1d891..."</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"issuer"</span>: <span class="s">"unv-norbert-zongo"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="s">"issued_at"</span>: <span class="s">"2024-07-15"</span><br>
+&nbsp;&nbsp;})<br>
+}<br>
+<span class="c"># Clé privée depuis .env — jamais exposée</span><br>
+<span class="k">signed_txn</span> = <span class="p">txn</span>.<span class="k">sign</span>(<span class="n">private_key</span>)<br>
+<span class="k">algod_client</span>.<span class="k">send_transaction</span>(<span class="n">signed_txn</span>)
+            </div>
+            <div class="callout success" style="margin-top:16px">
+              <p>La clé privée de l'université n'est <strong>jamais envoyée au serveur DiplomaChain</strong>. Elle est chargée localement depuis le fichier .env lors de la signature.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VÉRIFICATION -->
+    <div class="tab-panel" id="tab-verification">
+      <div class="two-col">
+        <div class="steps-detailed reveal">
+          <div class="step-d">
+            <div class="step-d-left"><div class="step-d-num">1</div><div class="step-d-line"></div></div>
+            <div class="step-d-body">
+              <div class="step-d-icon">📸</div>
+              <div class="step-d-title">Soumission de l'image ou du PDF</div>
+              <div class="step-d-desc">Le document est envoyé via l'API Flutter (POST multipart/form-data) ou directement via un formulaire web. L'API accepte les formats JPG, PNG, HEIC (photos iPhone) et PDF.</div>
+              <div class="step-d-tags"><span class="badge badge-blue">POST /api/verify/</span><span class="badge badge-purple">multipart</span></div>
+            </div>
+          </div>
+          <div class="step-d">
+            <div class="step-d-left"><div class="step-d-num">2</div><div class="step-d-line"></div></div>
+            <div class="step-d-body">
+              <div class="step-d-icon">🔧</div>
+              <div class="step-d-title">Prétraitement IA de l'image</div>
+              <div class="step-d-desc">Un pipeline de traitement d'image corrige automatiquement : redressement de la perspective (homographie), débruitage Gaussien, renforcement des contrastes par CLAHE, conversion en niveaux de gris pour accentuer le signal du tatouage.</div>
+              <div class="step-d-tags"><span class="badge badge-purple">OpenCV CLAHE</span><span class="badge badge-blue">Homographie</span><span class="badge badge-amber">Débruitage</span></div>
+            </div>
+          </div>
+          <div class="step-d">
+            <div class="step-d-left"><div class="step-d-num">3</div><div class="step-d-line"></div></div>
+            <div class="step-d-body">
+              <div class="step-d-icon">🔍</div>
+              <div class="step-d-title">Extraction de l'identifiant caché</div>
+              <div class="step-d-desc">L'algorithme d'extraction récupère l'identifiant de 12 caractères depuis les fréquences du document. Si au moins 60% des zones redondantes sont lisibles, l'extraction est considérée comme réussie.</div>
+              <div class="step-d-tags"><span class="badge badge-purple">Décryptage fréquentiel</span><span class="badge badge-blue">Vote majoritaire</span></div>
+            </div>
+          </div>
+          <div class="step-d">
+            <div class="step-d-left"><div class="step-d-num">4</div><div class="step-d-line"></div></div>
+            <div class="step-d-body">
+              <div class="step-d-icon">⛓</div>
+              <div class="step-d-title">Lecture de la transaction Algorand</div>
+              <div class="step-d-desc">L'API interroge le nœud Algorand avec l'identifiant extrait et récupère la transaction correspondante : le <strong>hash de référence</strong>, l'université émettrice et la date d'émission.</div>
+              <div class="step-d-tags"><span class="badge badge-cyan">Algorand REST</span><span class="badge badge-green">Indexer API</span></div>
+            </div>
+          </div>
+          <div class="step-d">
+            <div class="step-d-left"><div class="step-d-num">5</div></div>
+            <div class="step-d-body">
+              <div class="step-d-icon">✅</div>
+              <div class="step-d-title">Comparaison et verdict final</div>
+              <div class="step-d-desc">Le hash SHA-256 du document soumis est recalculé et comparé au hash enregistré sur la blockchain. Si les hashes sont identiques → <strong style="color:var(--green-400)">AUTHENTIC</strong>. Si différents ou ID introuvable → <strong style="color:var(--red-400)">INVALID</strong>. Résultat en &lt;3 secondes.</div>
+              <div class="step-d-tags"><span class="badge badge-green">AUTHENTIC</span><span class="badge badge-red">INVALID</span></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="check-demo reveal reveal-delay-1">
+            <h4 style="font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:16px">🔍 Démo de vérification simulée</h4>
+            <div class="check-input">
+              <input type="text" id="demoId" placeholder="Entrez un ID (ex: DC-A4F2B9)" aria-label="ID du diplôme"/>
+              <button class="btn btn-primary btn-sm" onclick="simulateCheck()" id="check-btn" style="flex-shrink:0">Vérifier</button>
+            </div>
+            <div class="check-result" id="check-result">
+              <div class="result-status">✅ DIPLÔME AUTHENTIQUE</div>
+              <div class="result-grid">
+                <div class="result-item"><label>ID enregistré</label><p id="r-id">DC-A4F2B9</p></div>
+                <div class="result-item"><label>Université</label><p>Univ. Norbert Zongo</p></div>
+                <div class="result-item"><label>Mention</label><p>Licence Informatique</p></div>
+                <div class="result-item"><label>Date d'émission</label><p>2024-07-15</p></div>
+                <div class="result-item"><label>Hash blockchain</label><p>a3f4b2c1d891...</p></div>
+                <div class="result-item"><label>Tx Algorand</label><p style="color:var(--cyan-400)">5KJH7...XQ2</p></div>
+              </div>
+            </div>
+            <div class="check-result" id="check-invalid" style="background:rgba(252,129,129,.07);border-color:rgba(252,129,129,.25)">
+              <div class="result-status" style="color:var(--red-400)">❌ DOCUMENT INVALIDE</div>
+              <p style="font-size:.85rem;color:var(--text-secondary)">Aucun enregistrement trouvé sur la blockchain Algorand pour cet identifiant. Ce document n'a pas été certifié par DiplomaChain ou a été modifié.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API REST -->
+    <div class="tab-panel" id="tab-api">
+      <div class="endpoint reveal">
+        <div class="endpoint-method"><span class="method-badge method-post">POST</span><span class="endpoint-path">/api/certify/</span></div>
+        <div class="endpoint-desc">Émission d'un diplôme certifié. Réservé aux universités authentifiées par token.</div>
+        <table class="param-table">
+          <thead><tr><th>Paramètre</th><th>Type</th><th>Requis</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>file</td><td>PDF/binary</td><td><span class="param-req">Requis</span></td><td>Le diplôme original en format PDF</td></tr>
+            <tr><td>student_name</td><td>string</td><td><span class="param-req">Requis</span></td><td>Nom complet du diplômé</td></tr>
+            <tr><td>degree_type</td><td>string</td><td><span class="param-req">Requis</span></td><td>Type de diplôme (Licence, Master, Doctorat...)</td></tr>
+            <tr><td>issued_date</td><td>date</td><td><span class="param-req">Requis</span></td><td>Date officielle d'émission du diplôme</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="endpoint reveal reveal-delay-1">
+        <div class="endpoint-method"><span class="method-badge method-post">POST</span><span class="endpoint-path">/api/verify/</span></div>
+        <div class="endpoint-desc">Vérification d'un diplôme. Public, sans authentification, sans limitation de taux raisonnable.</div>
+        <table class="param-table">
+          <thead><tr><th>Paramètre</th><th>Type</th><th>Requis</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>file</td><td>Image/PDF</td><td><span class="param-req">Requis</span></td><td>Photo ou scan du diplôme à vérifier (JPG, PNG, HEIC, PDF)</td></tr>
+          </tbody>
+        </table>
+        <div class="code-block" style="margin-top:16px">
+<span class="c"># Réponse — Diplôme authentique</span><br>
+{<br>
+&nbsp;&nbsp;<span class="k">"status"</span>: <span class="s">"AUTHENTIC"</span>,<br>
+&nbsp;&nbsp;<span class="k">"diploma_id"</span>: <span class="s">"DC-A4F2B9"</span>,<br>
+&nbsp;&nbsp;<span class="k">"issuer"</span>: <span class="s">"Université Norbert Zongo"</span>,<br>
+&nbsp;&nbsp;<span class="k">"student"</span>: <span class="s">"[Nom du diplômé]"</span>,<br>
+&nbsp;&nbsp;<span class="k">"degree"</span>: <span class="s">"Licence Informatique"</span>,<br>
+&nbsp;&nbsp;<span class="k">"issued_date"</span>: <span class="s">"2024-07-15"</span>,<br>
+&nbsp;&nbsp;<span class="k">"algo_tx_id"</span>: <span class="s">"5KJH7QXYZ..."</span>,<br>
+&nbsp;&nbsp;<span class="k">"verified_at"</span>: <span class="s">"2025-04-16T19:47:00Z"</span><br>
+}<br><br>
+<span class="c"># Réponse — Document invalide</span><br>
+{<br>
+&nbsp;&nbsp;<span class="k">"status"</span>: <span class="s">"INVALID"</span>,<br>
+&nbsp;&nbsp;<span class="k">"reason"</span>: <span class="s">"NO_RECORD_FOUND"</span><br>
+}
+        </div>
+      </div>
+
+      <div class="endpoint reveal reveal-delay-2">
+        <div class="endpoint-method"><span class="method-badge method-get">GET</span><span class="endpoint-path">/api/diploma/&lt;diploma_id&gt;/</span></div>
+        <div class="endpoint-desc">Récupération des informations publiques d'un diplôme certifié par son identifiant court.</div>
+        <table class="param-table">
+          <thead><tr><th>Paramètre</th><th>Type</th><th>Requis</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>diploma_id</td><td>string (URL)</td><td><span class="param-req">Requis</span></td><td>Identifiant court du diplôme (ex: DC-A4F2B9)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="padding:60px 0;background:var(--bg-0)">
+  <div class="section-container">
+    <div class="next-page-card reveal">
+      <div style="font-size:2.5rem;margin-bottom:14px">🛠️</div>
+      <h3>Envie d'explorer la stack technique ?</h3>
+      <p>Django, Algorand SDK, Flutter, OpenCV, SteganoHide — découvrez chaque composant technologique et les choix d'architecture qui le justifient.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <a href="{% url 'technologie' %}" class="btn btn-primary">Stack technologique →</a>
+        <a href="{% url 'home' %}#contact" class="btn btn-secondary">Rejoindre le projet</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Tabs
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.panel).classList.add('active');
+  });
+});
+// Simulate verification
+function simulateCheck() {
+  const id = document.getElementById('demoId').value.trim();
+  const authentic = ['DC-A4F2B9','DC-B7C301','DC-F1E200'];
+  const result = document.getElementById('check-result');
+  const invalid = document.getElementById('check-invalid');
+  result.classList.remove('show'); invalid.classList.remove('show');
+  setTimeout(() => {
+    if (!id) { invalid.classList.add('show'); return; }
+    if (authentic.some(a => id.toUpperCase().includes(a.split('-')[1])) || id.length >= 6) {
+      document.getElementById('r-id').textContent = id.toUpperCase();
+      result.classList.add('show');
+    } else { invalid.classList.add('show'); }
+  }, 600);
+}
+document.getElementById('demoId').addEventListener('keypress', e => { if(e.key==='Enter') simulateCheck(); });
+</script>
+{% endblock %}

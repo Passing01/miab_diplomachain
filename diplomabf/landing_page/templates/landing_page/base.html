@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="{% block meta_desc %}DiplomaChain — Registre blockchain pour l'authentification infalsifiable des diplômes au Burkina Faso. Stoppez les faux diplômes.{% endblock %}"/>
+  <meta name="keywords" content="diplôme, blockchain, Burkina Faso, authentification, faux diplômes, Algorand, vérification"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="{% block og_title %}DiplomaChain{% endblock %}"/>
+  <meta property="og:description" content="{% block og_desc %}Registre blockchain pour l'authentification infalsifiable des diplômes.{% endblock %}"/>
+  <title>{% block title %}DiplomaChain — Registre Blockchain de Diplômes{% endblock %}</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>"/>
+  <link rel="stylesheet" href="{% static 'landing_page/css/base.css' %}"/>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+<div class="noise" aria-hidden="true"></div>
+<canvas id="particleCanvas" style="position:fixed;inset:0;z-index:0;pointer-events:none;" aria-hidden="true"></canvas>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar" role="navigation" aria-label="Navigation principale">
+  <div class="nav-container">
+    <a href="{% url 'home' %}" class="nav-logo" aria-label="DiplomaChain — Accueil">
+      <div class="logo-icon" aria-hidden="true">🎓</div>
+      <span class="logo-text">DiplomaChain</span>
+    </a>
+    <ul class="nav-links" id="navLinks" role="list">
+      <button class="close-nav" id="closeNav" aria-label="Fermer">✕</button>
+      <li><a href="{% url 'probleme' %}" {% if request.resolver_match.url_name == 'probleme' %}class="active"{% endif %}>Le Problème</a></li>
+      <li><a href="{% url 'solution' %}" {% if request.resolver_match.url_name == 'solution' %}class="active"{% endif %}>La Solution</a></li>
+      <li><a href="{% url 'comment' %}" {% if request.resolver_match.url_name == 'comment' %}class="active"{% endif %}>Fonctionnement</a></li>
+      <li><a href="{% url 'technologie' %}" {% if request.resolver_match.url_name == 'technologie' %}class="active"{% endif %}>Technologies</a></li>
+      <li><a href="{% url 'home' %}#contact" class="nav-cta">Rejoindre le projet</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+{% block content %}{% endblock %}
+
+<!-- ===== FOOTER ===== -->
+<footer role="contentinfo">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="{% url 'home' %}" class="nav-logo" style="display:inline-flex">
+        <div class="logo-icon" style="width:34px;height:34px;font-size:16px">🎓</div>
+        <span class="logo-text" style="font-size:1.05rem">DiplomaChain</span>
+      </a>
+      <p>Registre blockchain pour l'authentification infalsifiable des diplômes universitaires. Une solution burkinabè pour l'Afrique.</p>
+      <div class="footer-socials" aria-label="Réseaux sociaux">
+        <a href="#" class="social-btn" aria-label="Twitter">𝕏</a>
+        <a href="#" class="social-btn" aria-label="LinkedIn">in</a>
+        <a href="#" class="social-btn" aria-label="GitHub">⌨</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Découvrir</h5>
+      <ul>
+        <li><a href="{% url 'probleme' %}">Le Problème</a></li>
+        <li><a href="{% url 'solution' %}">La Solution</a></li>
+        <li><a href="{% url 'comment' %}">Fonctionnement</a></li>
+        <li><a href="{% url 'technologie' %}">Technologies</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Ressources</h5>
+      <ul>
+        <li><a href="#">Documentation API</a></li>
+        <li><a href="#">Guide Université</a></li>
+        <li><a href="#">App Mobile Flutter</a></li>
+        <li><a href="#">Explorateur Blockchain</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Contact</h5>
+      <ul>
+        <li><a href="mailto:contact@diplomachain.bf">contact@diplomachain.bf</a></li>
+        <li><a href="#">Partenariats</a></li>
+        <li><a href="#">Politique de confidentialité</a></li>
+        <li><a href="#">Mentions légales</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 DiplomaChain · Fait avec ❤ au Burkina Faso</p>
+    <div class="footer-badge"><span>⛓</span><span>Propulsé par Algorand Blockchain</span></div>
+  </div>
+</footer>
+
+<script src="{% static 'landing_page/js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

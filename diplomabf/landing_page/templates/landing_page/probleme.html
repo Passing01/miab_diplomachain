@@ -1,0 +1,220 @@
+{% extends 'landing_page/base.html' %}
+{% load static %}
+{% block title %}Le Problème des Faux Diplômes au Burkina Faso — DiplomaChain{% endblock %}
+{% block meta_desc %}Analyse approfondie du phénomène des faux diplômes au Burkina Faso : statistiques officielles, scandales documentés, impacts sur la santé publique, l'éducation et l'économie.{% endblock %}
+
+{% block extra_css %}
+<style>
+.content-section{padding:80px 0}
+.content-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.prose h3{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;margin:32px 0 12px;color:var(--text-primary)}
+.prose p{font-size:.9rem;color:var(--text-secondary);line-height:1.8;margin-bottom:14px}
+.prose strong{color:var(--text-primary)}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:40px 0}
+.data-table{width:100%;border-collapse:collapse;margin:24px 0;border-radius:var(--radius-md);overflow:hidden}
+.data-table th{background:rgba(66,153,225,.12);padding:12px 16px;text-align:left;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue-400)}
+.data-table td{padding:12px 16px;font-size:.85rem;color:var(--text-secondary);border-bottom:1px solid var(--border)}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:rgba(66,153,225,.04);color:var(--text-primary)}
+.impact-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin:32px 0}
+.impact-card{background:var(--gradient-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;transition:var(--transition)}
+.impact-card:hover{border-color:var(--border-glow);transform:translateY(-4px)}
+.impact-icon{font-size:2rem;margin-bottom:12px}
+.impact-title{font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:8px}
+.impact-desc{font-size:.845rem;color:var(--text-secondary);line-height:1.7}
+.risk-bar{margin:8px 0}
+.risk-label{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:5px;color:var(--text-secondary)}
+.risk-track{height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+.risk-fill{height:100%;border-radius:4px;transition:width 1.4s ease}
+.risk-fill.r1{background:var(--gradient-danger);width:75%}
+.risk-fill.r2{background:linear-gradient(135deg,#c05621,#7b341e);width:55%}
+.risk-fill.r3{background:linear-gradient(135deg,#b7791f,#744210);width:40%}
+.risk-fill.r4{background:linear-gradient(135deg,#276749,#22543d);width:25%}
+.quote-block{border-left:3px solid var(--red-400);background:rgba(252,129,129,.05);padding:20px 24px;border-radius:0 var(--radius-md) var(--radius-md) 0;margin:24px 0}
+.quote-text{font-size:.9rem;color:var(--text-secondary);line-height:1.75;font-style:italic}
+.quote-source{font-size:.75rem;color:var(--text-muted);margin-top:10px;font-style:normal;font-weight:600}
+.next-page-card{background:var(--gradient-card);border:1px solid var(--border-glow);border-radius:var(--radius-lg);padding:32px;text-align:center;margin-top:64px}
+.next-page-card h3{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:10px}
+.next-page-card p{color:var(--text-secondary);font-size:.9rem;margin-bottom:22px}
+@media(max-width:900px){.content-grid{grid-template-columns:1fr}.stat-row{grid-template-columns:1fr 1fr}.impact-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.stat-row{grid-template-columns:1fr}}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- PAGE HERO -->
+<div class="page-hero" aria-labelledby="page-title">
+  <div class="page-hero-grid" aria-hidden="true"></div>
+  <div class="page-hero-orb" style="background:radial-gradient(circle,rgba(252,129,129,.28),transparent)" aria-hidden="true"></div>
+  <div class="section-container page-hero-content">
+    <nav class="breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{% url 'home' %}">Accueil</a>
+      <span>›</span>
+      <span class="current">Le Problème</span>
+    </nav>
+    <div class="badge badge-red" style="margin-bottom:20px">⚠ Analyse documentée</div>
+    <h1 class="page-title" id="page-title">Les faux diplômes :<br><span class="accent">une épidémie silencieuse</span><br>au Burkina Faso</h1>
+    <p class="page-lead">Des scandales documentés dans les ministères de la Santé, de l'Éducation et de la Défense. Des postes critiques occupés par des personnes sans qualification réelle. Une vérification impossible pour les recruteurs.</p>
+  </div>
+</div>
+
+<!-- ================================================================
+     DONNÉES CLÉS
+     ================================================================ -->
+<section class="content-section" style="background:var(--bg-1)" aria-labelledby="donnees-title">
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow">Données officielles</p>
+      <h2 class="section-title" id="donnees-title">Les chiffres qui font mal</h2>
+      <p class="section-desc">Ces données sont issues de rapports gouvernementaux burkinabè, d'enquêtes journalistiques publiées et de comparaisons avec d'autres pays africains confrontés au même phénomène.</p>
+    </div>
+    <div class="stat-row">
+      <div class="stat-block reveal"><div class="stat-block-value" data-target="30" data-suffix="%">0%</div><div class="stat-block-label">des diplômes aux concours de la fonction publique sont estimés falsifiés (MJFPE, 2022)</div></div>
+      <div class="stat-block reveal reveal-delay-1" style="border-color:rgba(246,173,85,.2)"><div class="stat-block-value" style="color:var(--amber-400)">50k–500k</div><div class="stat-block-label">FCFA : prix d'un faux diplôme universitaire sur le marché noir burkinabè (Burkina 24, 2023)</div></div>
+      <div class="stat-block reveal reveal-delay-2" style="border-color:rgba(183,148,244,.2)"><div class="stat-block-value" style="color:var(--purple-400)" data-target="15" data-suffix="–30 j">0j</div><div class="stat-block-label">délai pour une vérification manuelle auprès d'un établissement — coût : 20 000–50 000 FCFA</div></div>
+    </div>
+
+    <div class="content-grid reveal">
+      <div class="prose">
+        <h3>⚠ Scandales documentés (2020–2023)</h3>
+        <p>Entre 2020 et 2023, plusieurs ministères burkinabè ont été frappés par des affaires de faux diplômes d'une gravité exceptional :</p>
+        <div class="timeline" style="margin:20px 0">
+          <div class="timeline-item">
+            <div class="timeline-date">2020 — Ministère de la Santé</div>
+            <div class="timeline-title">Faux médecins et paramédicaux</div>
+            <div class="timeline-desc">Des agents exerçant avec de faux diplômes de médecine et d'infirmerie ont été détectés dans des structures hospitalières publiques. Le phénomène a conduit à un audit national des personnels de santé.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2021 — Ministère de l'Éducation</div>
+            <div class="timeline-title">Faux BAFA et faux CAFOP</div>
+            <div class="timeline-desc">Des individus ont obtenu des postes d'enseignants dans des écoles primaires et secondaires grâce à de faux Brevets d'Aptitude aux Fonctions d'Animation et de faux certificats pédagogiques.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2022 — Concours Fonction Publique</div>
+            <div class="timeline-title">25 à 30 % de dossiers frauduleux</div>
+            <div class="timeline-desc">Le MJFPE révèle lors d'un audit que près d'un tiers des diplômes présentés aux concours administratifs comportent des anomalies allant de la falsification partielle à la fabrication complète.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2023 — Ministère de la Défense</div>
+            <div class="timeline-title">Faux diplômes dans les rangs militaires</div>
+            <div class="timeline-desc">Des recrutements militaires basés sur des niveaux académiques fictifs ont été dénoncés, mettant en lumière l'absence de dispositif de vérification systématique des diplômes présentés.</div>
+          </div>
+        </div>
+        <div class="quote-block">
+          <p class="quote-text">« La facilité avec laquelle des faux diplômes circulent dans notre pays est alarmante. Pour 50 000 à 500 000 FCFA, n'importe qui peut obtenir un faux diplôme convaincant qu'aucun employeur ne saura distinguer d'un vrai. »</p>
+          <div class="quote-source">— Burkina 24, Enquête sur les faux diplômes, 2023</div>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:18px">Comparaison africaine</h3>
+        <table class="data-table" aria-label="Taux de fraude aux diplômes en Afrique">
+          <thead>
+            <tr><th>Pays</th><th>Taux estimé</th><th>Source</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>🇧🇫 Burkina Faso</td><td style="color:var(--red-400);font-weight:700">25–30%</td><td>MJFPE 2022</td></tr>
+            <tr><td>🇰🇪 Kenya</td><td style="color:var(--amber-400);font-weight:700">~21%</td><td>KNQA 2024</td></tr>
+            <tr><td>🇿🇦 Afrique du Sud</td><td style="color:var(--amber-400);font-weight:700">+158% sur 2021</td><td>SAQA 2023</td></tr>
+            <tr><td>🇳🇬 Nigeria</td><td style="color:var(--red-400);font-weight:700">Élevé</td><td>Gouv. 2024</td></tr>
+            <tr><td>🌍 Mondial (CV)</td><td style="color:var(--purple-400);font-weight:700">~41%</td><td>Étude WES</td></tr>
+          </tbody>
+        </table>
+        <div class="callout danger" style="margin-top:24px">
+          <p>En 2024, le Kenya a audité 47 000 certificats gouvernementaux et en a trouvé <strong>plus de 10 000 frauduleux</strong> (21%). Le Nigeria a interdit de reconnaître des diplômes de plusieurs pays africains suite à la prolifération de « diploma mills ».</p>
+        </div>
+        <div style="margin-top:28px">
+          <h4 style="font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:14px;font-size:.95rem">Secteurs les plus exposés au BF</h4>
+          <div class="risk-bar"><div class="risk-label"><span>🏥 Santé (médecine, pharmacie)</span><span style="color:var(--red-400)">Risque vital</span></div><div class="risk-track"><div class="risk-fill r1"></div></div></div>
+          <div class="risk-bar"><div class="risk-label"><span>🎓 Éducation (enseignement)</span><span style="color:var(--amber-400)">Risque élevé</span></div><div class="risk-track"><div class="risk-fill r2"></div></div></div>
+          <div class="risk-bar"><div class="risk-label"><span>⚖️ Justice &amp; Administration</span><span style="color:var(--amber-400)">Risque modéré</span></div><div class="risk-track"><div class="risk-fill r3"></div></div></div>
+          <div class="risk-bar"><div class="risk-label"><span>🏗️ Génie civil &amp; BTP</span><span style="color:var(--green-400)">Risque structurel</span></div><div class="risk-track"><div class="risk-fill r4"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     IMPACTS SECTORIELS
+     ================================================================ -->
+<section class="content-section" style="background:var(--bg-0)" aria-labelledby="impacts-title">
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow">Impacts documentés</p>
+      <h2 class="section-title" id="impacts-title">Qui en souffre vraiment ?</h2>
+      <p class="section-desc">La fraude aux diplômes ne touche pas seulement les recruteurs : elle met en danger des vies, freine le développement économique et dégrade la confiance dans les institutions.</p>
+    </div>
+    <div class="impact-grid reveal">
+      <div class="impact-card"><div class="impact-icon">🏥</div><div class="impact-title">Patients &amp; Santé Publique</div><div class="impact-desc">Des faux médecins, chirurgiens et pharmaciens pratiquent sans formation réelle dans des hôpitaux publics burkinabè. Des erreurs médicales documentées sont directement liées à leur incompétence cachée. La vie de patients est mise en jeu quotidiennement.</div></div>
+      <div class="impact-card"><div class="impact-icon">👧</div><div class="impact-title">Élèves &amp; Qualité Éducative</div><div class="impact-desc">Des faux enseignants sans formation pédagogique réelle occupent des classes entières pendant des années, déformant ou ralentissant l'apprentissage de milliers d'enfants dans les écoles primaires et secondaires publiques.</div></div>
+      <div class="impact-card"><div class="impact-icon">🎓</div><div class="impact-title">Diplômés Légitimes</div><div class="impact-desc">Les vrais diplômés perdent des postes face à des fraudeurs. La dépréciation des diplômes burkinabè sur le marché du travail africain décourage l'investissement dans la formation et fragilise la valeur des parcours honnêtes.</div></div>
+      <div class="impact-card"><div class="impact-icon">🏛️</div><div class="impact-title">Institutions &amp; Universités</div><div class="impact-desc">La réputation des universités burkinabè est ternie lorsque leurs diplômes sont associés à des fraudes. Les recruteurs étrangers développent une méfiance systématique envers les titres du pays, bloquant l'export des talents.</div></div>
+      <div class="impact-card"><div class="impact-icon">💰</div><div class="impact-title">État &amp; Finances Publiques</div><div class="impact-desc">Le salaire versé pendant des années à un faux fonctionnaire représente une perte sèche pour l'État. Les redressements, licenciements et procédures judiciaires engendrent des coûts administratifs massifs.</div></div>
+      <div class="impact-card"><div class="impact-icon">🌍</div><div class="impact-title">Attractivité Internationale</div><div class="impact-desc">Les entreprises étrangères et bailleurs de fonds internationaux hésitent à recruter des ressortissants burkinabè ou à financer des établissements dont les diplômes ne peuvent pas être vérifiés de manière fiable.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     POURQUOI IMPOSSIBLE À RÉSOUDRE SANS TECHNOLOGIE
+     ================================================================ -->
+<section class="content-section" style="background:var(--bg-1)" aria-labelledby="why-title">
+  <div class="section-container">
+    <div class="section-header">
+      <p class="section-eyebrow">L'impasse actuelle</p>
+      <h2 class="section-title" id="why-title">Pourquoi les solutions actuelles<br>ne fonctionnent pas ?</h2>
+    </div>
+    <div class="content-grid reveal">
+      <div>
+        <div class="card card-danger" style="margin-bottom:18px">
+          <div class="card-icon" style="background:rgba(252,129,129,.12)">📞</div>
+          <h4 class="card-title">Vérification par téléphone</h4>
+          <p class="card-desc">Appeler l'université pour confirmer un diplôme prend en moyenne 2 à 5 jours ouvrables — quand les services répondent. Aucune traçabilité, aucune preuve, facilement falsifiable par complicité.</p>
+        </div>
+        <div class="card card-danger" style="margin-bottom:18px">
+          <div class="card-icon" style="background:rgba(252,129,129,.12)">📬</div>
+          <h4 class="card-title">Vérification par courrier officiel</h4>
+          <p class="card-desc">La procédure formelle prend 15 à 30 jours et coûte 20 000 à 50 000 FCFA. Elle est systématiquement contournée par les employeurs faute de temps et de ressources.</p>
+        </div>
+        <div class="card card-danger">
+          <div class="card-icon" style="background:rgba(252,129,129,.12)">👁️</div>
+          <h4 class="card-title">Examen visuel du document</h4>
+          <p class="card-desc">Un faux diplôme produit avec des logiciels modernes est indiscernable visuellement d'un vrai. La photocopie couleur, la laminage et les faux tampons trompent même les agents expérimentés.</p>
+        </div>
+      </div>
+      <div class="prose">
+        <h3>L'équation impossible</h3>
+        <p>Pour qu'un système de vérification soit efficace, il doit réunir <strong>trois propriétés simultanées</strong> que les méthodes actuelles ne peuvent pas atteindre :</p>
+        <div class="callout" style="margin:20px 0">
+          <p><strong>1. Instantanéité</strong> — La vérification doit prendre quelques secondes, pas 30 jours. Un recruteur qui interview 50 candidats ne peut pas attendre un mois pour chacun.</p>
+        </div>
+        <div class="callout" style="margin:20px 0">
+          <p><strong>2. Coût nul</strong> — Si la vérification est payante, seules les administrations riches la feront, laissant les PME et ONG sans protection.</p>
+        </div>
+        <div class="callout" style="margin:20px 0">
+          <p><strong>3. Infalsifiabilité</strong> — Le registre de référence doit être impossible à modifier après coup. Un registre papier ou une base de données centralisée peut être corrompu de l'intérieur.</p>
+        </div>
+        <p><strong>La blockchain est la seule technologie qui réunit ces trois propriétés.</strong> Un registre décentralisé, immuable, public, consultable gratuitement par n'importe qui dans le monde, sans intermédiaire.</p>
+        <div style="margin-top:24px">
+          <a href="{% url 'solution' %}" class="btn btn-primary">Voir la solution blockchain →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Navigation -->
+<section style="padding:60px 0;background:var(--bg-0)">
+  <div class="section-container">
+    <div class="next-page-card reveal">
+      <div style="font-size:2.5rem;margin-bottom:14px">✅</div>
+      <h3>Le problème est clair — découvrez la solution</h3>
+      <p>DiplomaChain combine le tatouage numérique invisible, le hachage SHA-256 et la blockchain Algorand pour rendre toute falsification techniquement impossible.</p>
+      <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+        <a href="{% url 'solution' %}" class="btn btn-primary">Voir la solution complète →</a>
+        <a href="{% url 'comment' %}" class="btn btn-secondary">Comment ça marche ?</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
