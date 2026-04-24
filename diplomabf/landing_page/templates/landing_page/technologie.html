@@ -1,7 +1,7 @@
 {% extends 'landing_page/base.html' %}
 {% load static %}
-{% block title %}Stack Technologique — DiplomaChain{% endblock %}
-{% block meta_desc %}Architecture technique de DiplomaChain : Django DRF, Algorand SDK, SHA-256, OpenCV watermarking, Flutter mobile, sécurité Ed25519 et conformité RGPD.{% endblock %}
+{% block title %}Stack Technologique — DiploChain{% endblock %}
+{% block meta_desc %}Architecture technique de DiploChain : Django DRF, Algorand SDK, SHA-256, OpenCV watermarking, Flutter mobile, sécurité Ed25519 et conformité RGPD.{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -76,7 +76,7 @@
       <span class="current">Technologies</span>
     </nav>
     <div class="badge badge-green" style="margin-bottom:20px">🛠️ Stack de production</div>
-    <h1 class="page-title" id="page-title">Architecture <span class="accent">technique</span><br>de DiplomaChain</h1>
+    <h1 class="page-title" id="page-title">Architecture <span class="accent">technique</span><br>de DiploChain</h1>
     <p class="page-lead">Chaque technologie a été choisie pour une raison précise : sécurité, performance, conformité ou robustesse. Voici l'architecture complète, sans compromis.</p>
   </div>
 </div>
@@ -147,7 +147,7 @@
             <div><div class="tech-block-title">Django 5.x + Django REST Framework</div><div class="tech-block-version">Python 3.12 · DRF 3.15</div></div>
           </div>
           <div class="prose">
-            <p>Le backend REST de DiplomaChain. DRF fournit le système d'authentification par token pour les universités. Django orchestre les deux modules principaux : certification (émission) et vérification.</p>
+            <p>Le backend REST de DiploChain. DRF fournit le système d'authentification par token pour les universités. Django orchestre les deux modules principaux : certification (émission) et vérification.</p>
             <ul>
               <li>Traitement en mémoire (<code style="color:var(--cyan-400)">InMemoryUploadedFile</code>) — aucun diplôme stocké sur disque</li>
               <li>Sérialisation et validation des données entrantes avec DRF Serializers</li>
@@ -239,8 +239,8 @@
             <ul>
               <li><strong>SHA-256</strong> — Algorithme de hachage (famille SHA-2) produisant une empreinte de 256 bits. Résistant à toutes les attaques connues par collision. Utilisé dans Bitcoin, TLS, et les certificats X.509.</li>
               <li><strong>Ed25519</strong> — Algorithme de signature à courbe elliptique utilisé par Algorand. Chaque université dispose d'une paire (clé privée / clé publique). La clé privée est stockée dans un fichier <code style="color:var(--cyan-400)">.env</code> non commité.</li>
-              <li>Les clés privées ne sont <strong>jamais envoyées ou stockées côté serveur DiplomaChain</strong></li>
-              <li>Modèle Zero-Trust : même un administrateur DiplomaChain ne peut pas forger de diplôme</li>
+              <li>Les clés privées ne sont <strong>jamais envoyées ou stockées côté serveur DiploChain</strong></li>
+              <li>Modèle Zero-Trust : même un administrateur DiploChain ne peut pas forger de diplôme</li>
             </ul>
           </div>
           <div class="tech-block-tags">
@@ -297,12 +297,12 @@
     <div class="section-header">
       <p class="section-eyebrow">Sécurité</p>
       <h2 class="section-title" id="secu-title">Modèle de sécurité Zero-Trust</h2>
-      <p class="section-desc">DiplomaChain est conçu pour qu'aucune compromission du serveur ne puisse permettre la création de faux diplômes.</p>
+      <p class="section-desc">DiploChain est conçu pour qu'aucune compromission du serveur ne puisse permettre la création de faux diplômes.</p>
     </div>
     <div class="security-grid reveal">
-      <div class="sec-card"><div class="sec-icon">🔑</div><div class="sec-title">Clés privées hors serveur</div><div class="sec-desc">Les clés privées des universités ne sont jamais envoyées à DiplomaChain. Elles restent sur les systèmes de l'établissement, dans un fichier .env sécurisé.</div></div>
+      <div class="sec-card"><div class="sec-icon">🔑</div><div class="sec-title">Clés privées hors serveur</div><div class="sec-desc">Les clés privées des universités ne sont jamais envoyées à DiploChain. Elles restent sur les systèmes de l'établissement, dans un fichier .env sécurisé.</div></div>
       <div class="sec-card"><div class="sec-icon">🗂️</div><div class="sec-title">Données traitées en mémoire</div><div class="sec-desc">Aucun diplôme n'est jamais écrit sur le disque du serveur. Traitement 100% RAM — conformité totale avec le RGPD sur les données personnelles.</div></div>
-      <div class="sec-card"><div class="sec-icon">⛓</div><div class="sec-title">Registre décentralisé</div><div class="sec-desc">Le registre de référence est sur Algorand, pas sur les serveurs de DiplomaChain. Même si DiplomaChain disparaît, toutes les transactions restent consultables.</div></div>
+      <div class="sec-card"><div class="sec-icon">⛓</div><div class="sec-title">Registre décentralisé</div><div class="sec-desc">Le registre de référence est sur Algorand, pas sur les serveurs de DiploChain. Même si DiploChain disparaît, toutes les transactions restent consultables.</div></div>
       <div class="sec-card"><div class="sec-icon">🔏</div><div class="sec-title">Signature non reproductible</div><div class="sec-desc">Sans la clé privée d'un établissement, il est cryptographiquement impossible d'enregistrer un diplôme en son nom. Aucune permission admin ne peut contourner cela.</div></div>
       <div class="sec-card"><div class="sec-icon">📋</div><div class="sec-title">Audit trail complet</div><div class="sec-desc">Toutes les actions d'émission sont journalisées avec timestamp, adresse IP et identifiant de l'université. La blockchain elle-même constitue un deuxième audit immutable.</div></div>
       <div class="sec-card"><div class="sec-icon">🌐</div><div class="sec-title">Vérification publique</div><div class="sec-desc">N'importe qui dans le monde peut consulter les transactions sur l'explorateur Algorand public — sans compte, sans API key, sans intermédiaire.</div></div>
@@ -316,7 +316,7 @@
     <div class="next-page-card reveal">
       <div style="font-size:2.5rem;margin-bottom:14px">🚀</div>
       <h3>Vous êtes développeur ou porteur de projet ?</h3>
-      <p>DiplomaChain cherche des partenaires techniques et institutionnels pour déployer la solution dans les universités burkinabè. Contactez-nous pour une démo ou une intégration pilote.</p>
+      <p>DiploChain cherche des partenaires techniques et institutionnels pour déployer la solution dans les universités burkinabè. Contactez-nous pour une démo ou une intégration pilote.</p>
       <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
         <a href="{% url 'home' %}#contact" class="btn btn-primary">Rejoindre le projet →</a>
         <a href="{% url 'comment' %}" class="btn btn-secondary">Voir l'API REST</a>

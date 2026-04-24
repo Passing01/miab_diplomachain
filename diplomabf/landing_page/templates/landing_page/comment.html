@@ -1,7 +1,7 @@
 {% extends 'landing_page/base.html' %}
 {% load static %}
-{% block title %}Comment ça marche — DiplomaChain{% endblock %}
-{% block meta_desc %}Fonctionnement détaillé de DiplomaChain : émission d'un diplôme certifié blockchain, vérification par photo, prétraitement IA et endpoints API REST.{% endblock %}
+{% block title %}Comment ça marche — DiploChain{% endblock %}
+{% block meta_desc %}Fonctionnement détaillé de DiploChain : émission d'un diplôme certifié blockchain, vérification par photo, prétraitement IA et endpoints API REST.{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -75,7 +75,7 @@
     </nav>
     <div class="badge badge-purple" style="margin-bottom:20px">⚙️ Documentation technique</div>
     <h1 class="page-title" id="page-title">Fonctionnement<br><span class="accent">étape par étape</span></h1>
-    <p class="page-lead">De l'upload du diplôme à l'ancrage blockchain, puis de la photo du recruteur au verdict en 3 secondes — voici le flux complet de DiplomaChain, sans boite noire.</p>
+    <p class="page-lead">De l'upload du diplôme à l'ancrage blockchain, puis de la photo du recruteur au verdict en 3 secondes — voici le flux complet de DiploChain, sans boite noire.</p>
   </div>
 </div>
 
@@ -84,7 +84,7 @@
   <div class="section-container">
     <div class="section-header">
       <p class="section-eyebrow">Deux flux complémentaires</p>
-      <h2 class="section-title" id="flux-title">Le cycle complet d'un diplôme<br>sur DiplomaChain</h2>
+      <h2 class="section-title" id="flux-title">Le cycle complet d'un diplôme<br>sur DiploChain</h2>
     </div>
     <div class="tabs-container reveal" role="tablist">
       <button class="tab-btn active" data-panel="tab-emission" role="tab">🎓 Émission</button>
@@ -101,7 +101,7 @@
             <div class="step-d-body">
               <div class="step-d-icon">🏫</div>
               <div class="step-d-title">Authentification de l'université</div>
-              <div class="step-d-desc">L'université se connecte à son portail DiplomaChain avec ses identifiants. L'authentification repose sur un <strong>token DRF</strong> généré lors de l'accré­ditation. Sans ce token valide, aucune émission n'est possible.</div>
+              <div class="step-d-desc">L'université se connecte à son portail DiploChain avec ses identifiants. L'authentification repose sur un <strong>token DRF</strong> généré lors de l'accré­ditation. Sans ce token valide, aucune émission n'est possible.</div>
               <div class="step-d-tags"><span class="badge badge-blue">Token Auth</span><span class="badge badge-purple">DRF</span></div>
             </div>
           </div>
@@ -162,7 +162,7 @@
 <span class="k">algod_client</span>.<span class="k">send_transaction</span>(<span class="n">signed_txn</span>)
             </div>
             <div class="callout success" style="margin-top:16px">
-              <p>La clé privée de l'université n'est <strong>jamais envoyée au serveur DiplomaChain</strong>. Elle est chargée localement depuis le fichier .env lors de la signature.</p>
+              <p>La clé privée de l'université n'est <strong>jamais envoyée au serveur DiploChain</strong>. Elle est chargée localement depuis le fichier .env lors de la signature.</p>
             </div>
           </div>
         </div>
@@ -239,7 +239,7 @@
             </div>
             <div class="check-result" id="check-invalid" style="background:rgba(252,129,129,.07);border-color:rgba(252,129,129,.25)">
               <div class="result-status" style="color:var(--red-400)">❌ DOCUMENT INVALIDE</div>
-              <p style="font-size:.85rem;color:var(--text-secondary)">Aucun enregistrement trouvé sur la blockchain Algorand pour cet identifiant. Ce document n'a pas été certifié par DiplomaChain ou a été modifié.</p>
+              <p style="font-size:.85rem;color:var(--text-secondary)">Aucun enregistrement trouvé sur la blockchain Algorand pour cet identifiant. Ce document n'a pas été certifié par DiploChain ou a été modifié.</p>
             </div>
           </div>
         </div>
