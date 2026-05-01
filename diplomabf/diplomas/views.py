@@ -86,7 +86,9 @@ class VerifyDiplomaView(views.APIView):
     )
     def post(self, request):
         """Verify a diploma by uploading the PDF file."""
-        pdf_file = request.FILES.get('pdf')
+        # Standardize: accept 'pdf' (web) or 'file' (mobile)
+        pdf_file = request.FILES.get('pdf') or request.FILES.get('file')
+        
         if not pdf_file:
             return Response({"error": "No file uploaded"}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -119,15 +121,31 @@ class VerifyDiplomaView(views.APIView):
             return Response({"status": "Invalid", "message": "Ce document est inconnu ou a été modifié (Échec de l'empreinte numérique)."}, status=status.HTTP_404_NOT_FOUND)
 
     def get(self, request):
-        identifier = request.query_params.get('id')
-        doc_hash = request.query_params.get('hash')
+        identifier = request.query_params.get('id', '').strip()
+        doc_hash = request.query_params.get('hash', '').strip()
 
         if not identifier and not doc_hash:
             return Response({"error": "Veuillez fournir un identifiant ou un fichier."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             if identifier:
-                diploma = Diploma.objects.get(unique_identifier=identifier)
+                # Robust matching: strip prefix 'MIAB-', remove dashes, uppercase
+                clean_id = identifier.upper()
+                if clean_id.startswith('MIAB-'):
+                    clean_id = clean_id[5:]
+                clean_id = clean_id.replace('-', '')
+                
+                # Search by unique_identifier OR student_id_number (matricule)
+                from django.db.models import Q
+                diplomas = Diploma.objects.filter(
+                    Q(unique_identifier=clean_id) | Q(student_id_number=identifier) | Q(student_id_number=clean_id)
+                )
+                
+                if not diplomas.exists():
+                    raise Diploma.DoesNotExist()
+                
+                # If multiple found (e.g. same student has multiple diplomas), pick the latest one
+                diploma = diplomas.order_by('-created_at').first()
             else:
                 diploma = Diploma.objects.get(document_hash=doc_hash)
             
