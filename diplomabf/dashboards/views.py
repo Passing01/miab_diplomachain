@@ -46,7 +46,16 @@ def institution_dashboard(request):
     except Institution.DoesNotExist:
         inst = None
         
-    diplomas = Diploma.objects.filter(institution=inst) if inst else []
+    diplomas = Diploma.objects.filter(institution=inst).order_by('-created_at') if inst else []
+    recent_diplomas = diplomas[:5] if inst else []
+    
+    # Calculate Stats
+    stats = {
+        'total': diplomas.count() if inst else 0,
+        'verifications': VerificationLog.objects.filter(diploma__institution=inst).count() if inst else 0,
+        'revoked': diplomas.filter(status='revoked').count() if inst else 0,
+        'pending': diplomas.filter(status='pending').count() if inst else 0,
+    }
     
     # Fetch Algorand Balance
     balance = 0
@@ -60,8 +69,53 @@ def institution_dashboard(request):
 
     return render(request, 'dashboards/institution.html', {
         'institution': inst,
-        'diplomas': diplomas,
+        'diplomas': recent_diplomas,
+        'stats': stats,
         'balance': balance
+    })
+
+@login_required
+def institution_register(request):
+    """View to show all diplomas of an institution."""
+    if request.user.role != 'institution':
+        return redirect('dashboard')
+    
+    try:
+        inst = Institution.objects.get(name=request.user.institution_name)
+    except Institution.DoesNotExist:
+        return redirect('dashboard')
+        
+    diplomas = Diploma.objects.filter(institution=inst).order_by('-graduation_date')
+    return render(request, 'dashboards/institution_register.html', {
+        'diplomas': diplomas
+    })
+
+@login_required
+def search_diplomas(request):
+    """Search within an institution's diplomas."""
+    if request.user.role != 'institution':
+        return redirect('dashboard')
+        
+    query = request.GET.get('q', '')
+    results = []
+    
+    if query:
+        try:
+            inst = Institution.objects.get(name=request.user.institution_name)
+            from django.db.models import Q
+            results = Diploma.objects.filter(
+                Q(student_first_name__icontains=query) |
+                Q(student_last_name__icontains=query) |
+                Q(student_id_number__icontains=query) |
+                Q(unique_identifier__icontains=query),
+                institution=inst
+            )
+        except Institution.DoesNotExist:
+            pass
+
+    return render(request, 'dashboards/search_diplomas.html', {
+        'query': query,
+        'results': results
     })
 
 @login_required

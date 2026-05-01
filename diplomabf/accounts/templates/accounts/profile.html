@@ -1,0 +1,80 @@
+{% extends 'dashboards/base_dashboard.html' %}
+
+{% block dash_title %}Mon Profil{% endblock %}
+
+{% block dash_content %}
+<style>
+    .profile-card {
+        background: white;
+        padding: 40px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        max-width: 800px;
+    }
+
+    .info-group {
+        margin-bottom: 32px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 24px;
+    }
+
+    .info-group:last-child {
+        border-bottom: none;
+    }
+
+    .label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #888;
+        margin-bottom: 8px;
+    }
+
+    .value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--sidebar-bg);
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        background: var(--accent-green);
+        color: white;
+        margin-top: 8px;
+    }
+</style>
+
+<div style="margin-bottom: 40px;">
+    <h1 style="font-weight: 800; font-size: 1.5rem;">Informations du Compte</h1>
+</div>
+
+<div class="profile-card">
+    <div class="info-group">
+        <div class="label">Utilisateur</div>
+        <div class="value">{{ user.get_full_name|default:user.username }}</div>
+        <div class="badge">{{ user.get_role_display }}</div>
+    </div>
+
+    <div class="info-group">
+        <div class="label">Adresse Email</div>
+        <div class="value">{{ user.email }}</div>
+    </div>
+
+    <div class="info-group">
+        <div class="label">Établissement</div>
+        <div class="value">{{ user.institution_name|default:"Non spécifié" }}</div>
+    </div>
+
+    <div class="info-group">
+        <div class="label">Date d'inscription</div>
+        <div class="value">{{ user.date_joined|date:"d F Y" }}</div>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <a href="{% url 'logout' %}" class="btn" style="background: var(--accent-red); color: white; border: none; padding: 12px 32px;">Se déconnecter</a>
+    </div>
+</div>
+{% endblock %}

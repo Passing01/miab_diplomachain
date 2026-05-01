@@ -1,103 +1,267 @@
-{% extends 'landing_page/base.html' %}
+{% extends 'dashboards/base_dashboard.html' %}
 
-{% block title %}Tableau de bord Université{% endblock %}
+{% block dash_title %}Tableau de bord{% endblock %}
 
-{% block content %}
-<section class="page-hero">
-    <div class="page-hero-grid"></div>
-    <div class="section-container page-hero-content">
-        <h1 class="page-title">{{ institution.name|default:"Mon Université" }}</h1>
-        <p class="page-lead">Portail de certification et de gestion des identités blockchain.</p>
-        
-        {% if institution %}
-        <div style="margin-top: 32px; background: rgba(16, 30, 56, 0.5); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border);">
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">Adresse Blockchain :</p>
-            <code style="color: var(--cyan-400); font-size: 0.9rem; word-break: break-all;">{{ institution.blockchain_address }}</code>
-            
-            <div style="margin-top: 16px; display: flex; gap: 24px; align-items: center;">
-                <div>
-                    <p style="font-size: 0.75rem; color: var(--text-muted);">Solde ALGO :</p>
-                    <p style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">
-                        {{ balance }} ALGO
-                    </p>
-                </div>
-                <div>
-                    <p style="font-size: 0.75rem; color: var(--text-muted);">Statut du compte :</p>
-                    {% if balance == "Erreur" %}
-                        <span class="badge badge-red">Indisponible</span>
-                    {% elif balance > 0 %}
-                        <span class="badge badge-green">Actif & Financé</span>
-                    {% else %}
-                        <span class="badge badge-red">Non financé</span>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
+{% block dash_content %}
+<style>
+    .header-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    .account-summary {
+        background: white;
+        padding: 24px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 32px;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 32px;
+        align-items: center;
+    }
+
+    .info-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #888;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+
+    .info-value {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.9rem;
+        color: var(--sidebar-bg);
+        word-break: break-all;
+    }
+
+    .balance-value {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--accent-green);
+    }
+
+    .badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .badge-success { background: #e6f4ea; color: #1e8e3e; }
+    .badge-warning { background: #fef7e0; color: #f9ab00; }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 24px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        text-align: center;
+    }
+
+    .stat-title {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .stat-value {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .section-box {
+        background: white;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 32px;
+    }
+
+    .box-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .box-title {
+        font-weight: 800;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+    }
+
+    .table-res {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table-res th {
+        background: #f5f5f5;
+        text-align: left;
+        padding: 12px 24px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #888;
+        text-transform: uppercase;
+    }
+
+    .table-res td {
+        padding: 12px 24px;
+        border-bottom: 1px solid #eee;
+        font-size: 0.9rem;
+    }
+
+    .status-badge {
+        font-weight: 700;
+        font-size: 0.8rem;
+    }
+
+    .status-valid { color: var(--accent-green); }
+    .status-revoked { color: var(--accent-red); }
+    .status-pending { color: var(--accent-amber); }
+
+    .btn-action {
+        padding: 4px 12px;
+        border: 1px solid #ccc;
+        background: white;
+        font-size: 0.8rem;
+        cursor: pointer;
+    }
+
+    .btn-action:hover {
+        background: #eee;
+    }
+</style>
+
+<div class="header-bar">
+    <h1 style="font-weight: 800; font-size: 1.5rem;">Tableau de bord</h1>
+    <a href="{% url 'emit_diploma' %}" class="btn" style="background: var(--accent-green); color: white; border: none; padding: 12px 24px; font-weight: 700;">➕ Nouveau diplôme</a>
+</div>
+
+<!-- Account Summary -->
+<div class="account-summary">
+    <div>
+        <div class="info-label">Clé Publique Blockchain (Algorand)</div>
+        <div class="info-value">{{ institution.blockchain_address|default:"Non configurée" }}</div>
+    </div>
+    <div style="text-align: center;">
+        <div class="info-label">Solde Portefeuille</div>
+        <div class="balance-value">{{ balance }} ALGO</div>
+    </div>
+    <div style="text-align: center;">
+        <div class="info-label">Statut Établissement</div>
+        {% if institution.blockchain_address %}
+            <span class="badge badge-success">Vérifié & Actif</span>
+        {% else %}
+            <span class="badge badge-warning">En attente d'activation</span>
         {% endif %}
     </div>
-</section>
+</div>
 
-<section style="padding: 60px 0;">
-    <div class="section-container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
-            <h2 class="section-title" style="margin-bottom: 0;">Diplômes Émis</h2>
-            <a href="{% url 'emit_diploma' %}" class="btn btn-primary">Émettre un Diplôme</a>
-        </div>
-
-        <div class="card" style="padding: 0; overflow: hidden;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                <thead>
-                    <tr style="background: rgba(16, 30, 56, 0.8); border-bottom: 1px solid var(--border);">
-                        <th style="padding: 16px;">Étudiant</th>
-                        <th style="padding: 16px;">Diplôme</th>
-                        <th style="padding: 16px;">ID Unique</th>
-                        <th style="padding: 16px;">Blockchain</th>
-                        <th style="padding: 16px;">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for diploma in diplomas %}
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 16px;">{{ diploma.student_first_name }} {{ diploma.student_last_name }}</td>
-                        <td style="padding: 16px;">{{ diploma.degree_name }}</td>
-                        <td style="padding: 16px;"><code style="color: var(--blue-400);">{{ diploma.unique_identifier }}</code></td>
-                        <td style="padding: 16px;">
-                            {% if diploma.blockchain_tx_id %}
-                            <span class="badge badge-green">Ancré</span>
-                            {% else %}
-                            <span class="badge badge-amber">En attente</span>
-                            {% endif %}
-                        </td>
-                        <td style="padding: 16px;">
-                            <div style="display: flex; gap: 8px;">
-                                {% if not diploma.blockchain_tx_id %}
-                                <button onclick="anchorDiploma('{{ diploma.id }}')" class="btn btn-secondary btn-sm">Ancrer</button>
-                                {% else %}
-                                <a href="https://testnet.algoexplorer.io/tx/{{ diploma.blockchain_tx_id }}" target="_blank" class="btn btn-secondary btn-sm">Preuve</a>
-                                {% endif %}
-                                <a href="{{ diploma.pdf_file.url }}" target="_blank" class="btn btn-secondary btn-sm">PDF</a>
-                            </div>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="5" style="padding: 32px; text-align: center; color: var(--text-muted);">Aucun diplôme émis pour le moment.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+<!-- Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-title">Total Diplômes</div>
+        <div class="stat-value">{{ stats.total }}</div>
     </div>
-</section>
+    <div class="stat-card">
+        <div class="stat-title">Vérifications</div>
+        <div class="stat-value">{{ stats.verifications }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">Révoqués</div>
+        <div class="stat-value">{{ stats.revoked }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-title">En attente</div>
+        <div class="stat-value" style="color: var(--accent-amber);">{{ stats.pending }}</div>
+    </div>
+</div>
+
+<!-- Recent Table -->
+<div class="section-box">
+    <div class="box-header">
+        <div class="box-title">Registre - Derniers ajouts</div>
+        <a href="{% url 'institution_register' %}" class="btn-action">Voir tout le registre</a>
+    </div>
+    <table class="table-res">
+        <thead>
+            <tr>
+                <th>Matricule</th>
+                <th>Nom Complet</th>
+                <th>Diplôme</th>
+                <th>Date</th>
+                <th>Statut</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for diploma in diplomas %}
+            <tr>
+                <td>{{ diploma.student_id_number }}</td>
+                <td style="font-weight: 700;">{{ diploma.student_first_name }} {{ diploma.student_last_name }}</td>
+                <td>{{ diploma.degree_name }}</td>
+                <td>{{ diploma.graduation_date|date:"d / m / Y" }}</td>
+                <td>
+                    {% if diploma.status == 'valid' %}
+                    <span class="status-badge status-valid">Valide</span>
+                    {% elif diploma.status == 'revoked' %}
+                    <span class="status-badge status-revoked">✘ Révoqué</span>
+                    {% else %}
+                    <span class="status-badge status-pending">⌛ En attente</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not diploma.blockchain_tx_id %}
+                    <button onclick="anchorDiploma('{{ diploma.id }}')" class="btn-action">Ancrer</button>
+                    {% else %}
+                    <span style="font-size: 0.7rem; color: #888;">Blockchain OK</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center; color: #888; padding: 40px;">Aucun diplôme enregistré.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
 <script>
 async function anchorDiploma(id) {
-    if (!confirm("Voulez-vous ancrer ce diplôme sur la blockchain Algorand ?")) return;
+    const result = await Swal.fire({
+        title: 'Confirmer l\'ancrage ?',
+        text: "Voulez-vous valider et ancrer ce diplôme sur la blockchain Algorand ?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#00a651',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Oui, ancrer !',
+        cancelButtonText: 'Annuler'
+    });
+
+    if (!result.isConfirmed) return;
     
-    const btn = event.target;
-    const originalText = btn.innerText;
-    btn.innerText = "Ancrage...";
-    btn.disabled = true;
+    Swal.fire({
+        title: 'Traitement...',
+        text: 'Ancrage blockchain en cours',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading() }
+    });
 
     try {
         const response = await fetch(`/api/core/diplomas/${id}/anchor/`, {
@@ -110,17 +274,12 @@ async function anchorDiploma(id) {
         
         const data = await response.json();
         if (response.ok) {
-            alert("Succès ! Diplôme ancré. TXID: " + data.tx_id);
-            location.reload();
+            Swal.fire('Succès !', 'Le diplôme a été ancré avec succès.', 'success').then(() => location.reload());
         } else {
-            alert("Erreur : " + (data.error || data.message));
-            btn.innerText = originalText;
-            btn.disabled = false;
+            Swal.fire('Erreur', data.error || data.message || 'Une erreur est survenue.', 'error');
         }
     } catch (error) {
-        alert("Erreur de connexion au serveur.");
-        btn.innerText = originalText;
-        btn.disabled = false;
+        Swal.fire('Erreur', 'Impossible de contacter le serveur.', 'error');
     }
 }
 </script>

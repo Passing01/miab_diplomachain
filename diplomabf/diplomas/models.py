@@ -44,6 +44,12 @@ class Diploma(models.Model):
     blockchain_tx_id = models.CharField(max_length=100, blank=True, null=True, verbose_name="ID Transaction Algorand")
     
     # Status
+    STATUS_CHOICES = [
+        ('pending', 'En attente'),
+        ('valid', 'Valide'),
+        ('revoked', 'Révoqué'),
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='valid')
     is_verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

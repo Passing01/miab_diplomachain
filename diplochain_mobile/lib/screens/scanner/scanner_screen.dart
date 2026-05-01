@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../services/api_service.dart';
 import '../../theme/app_theme.dart';
+import '../recherche/recherche_screen.dart';
 import '../../widgets/common_widgets.dart';
 import '../../models/diplome.dart';
 
@@ -14,10 +15,10 @@ class ScannerScreen extends StatefulWidget {
 }
 
 class _ScannerScreenState extends State<ScannerScreen> {
-  final _apiService      = ApiService();
-  final _scannerCtrl     = MobileScannerController();
-  bool _scanning         = true;
-  bool _loading          = false;
+  final _apiService = ApiService();
+  final _scannerCtrl = MobileScannerController();
+  bool _scanning = true;
+  bool _loading = false;
   Diplome? _resultat;
 
   @override
@@ -31,7 +32,10 @@ class _ScannerScreenState extends State<ScannerScreen> {
     final barcode = capture.barcodes.firstOrNull;
     if (barcode?.rawValue == null) return;
 
-    setState(() { _scanning = false; _loading = true; });
+    setState(() {
+      _scanning = false;
+      _loading = true;
+    });
     await _scannerCtrl.stop();
 
     final result = await _apiService.verifierParQR(barcode!.rawValue!);
@@ -39,16 +43,26 @@ class _ScannerScreenState extends State<ScannerScreen> {
     if (!mounted) return;
     setState(() {
       _loading = false;
-      _resultat = result['success'] ? result['diplome'] : Diplome(
-        matricule: '', nomComplet: '', diplome: '', mention: '',
-        etablissement: '', annee: '', dateDelivrance: '',
-        statut: StatutDiplome.introuvable,
-      );
+      _resultat = result['success']
+          ? result['diplome']
+          : Diplome(
+              matricule: '',
+              nomComplet: '',
+              diplome: '',
+              mention: '',
+              etablissement: '',
+              annee: '',
+              dateDelivrance: '',
+              statut: StatutDiplome.introuvable,
+            );
     });
   }
 
   void _recommencer() {
-    setState(() { _scanning = true; _resultat = null; });
+    setState(() {
+      _scanning = true;
+      _resultat = null;
+    });
     _scannerCtrl.start();
   }
 
@@ -72,14 +86,20 @@ class _ScannerScreenState extends State<ScannerScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
                 child: Row(
                   children: [
-                    Expanded(child: Column(
+                    Expanded(
+                        child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('DiploVérif BF',
-                          style: GoogleFonts.syne(fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white)),
+                            style: GoogleFonts.syne(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white)),
                         Text('SCANNER UN DIPLÔME',
-                          style: GoogleFonts.epilogue(fontSize: 9, letterSpacing: 2.5,
-                            color: Colors.white.withOpacity(0.45))),
+                            style: GoogleFonts.epilogue(
+                                fontSize: 9,
+                                letterSpacing: 2.5,
+                                color: Colors.white.withOpacity(0.45))),
                       ],
                     )),
                     Container(
@@ -88,7 +108,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
                         color: Colors.white.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(Icons.qr_code_scanner_rounded, color: Colors.white, size: 22),
+                      child: const Icon(Icons.qr_code_scanner_rounded,
+                          color: Colors.white, size: 22),
                     ),
                   ],
                 ),
@@ -98,9 +119,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
           // ── CONTENU ──
           Expanded(
-            child: _resultat != null
-              ? _buildResultat()
-              : _buildScanner(),
+            child: _resultat != null ? _buildResultat() : _buildScanner(),
           ),
         ],
       ),
@@ -113,12 +132,15 @@ class _ScannerScreenState extends State<ScannerScreen> {
       child: Column(
         children: [
           const SizedBox(height: 8),
-          Text('Scanner le QR Code du candidat',
-            style: GoogleFonts.syne(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.text)),
+          Text('Scanner le Diplome du candidat',
+              style: GoogleFonts.syne(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.text)),
           const SizedBox(height: 4),
-          Text('Pointez la caméra vers le QR Code du diplôme',
-            style: GoogleFonts.epilogue(fontSize: 12, color: AppColors.sub),
-            textAlign: TextAlign.center),
+          Text('Pointez la caméra vers le diplôme',
+              style: GoogleFonts.epilogue(fontSize: 12, color: AppColors.sub),
+              textAlign: TextAlign.center),
           const SizedBox(height: 20),
 
           // Zone scanner
@@ -138,7 +160,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
                     Container(
                       color: Colors.black54,
                       child: const Center(
-                        child: CircularProgressIndicator(color: AppColors.or)),
+                          child:
+                              CircularProgressIndicator(color: AppColors.or)),
                     ),
                 ],
               ),
@@ -146,8 +169,8 @@ class _ScannerScreenState extends State<ScannerScreen> {
           ),
           const SizedBox(height: 16),
           Text('Assurez-vous que le QR Code est bien centré et éclairé',
-            style: GoogleFonts.epilogue(fontSize: 11, color: AppColors.gris3),
-            textAlign: TextAlign.center),
+              style: GoogleFonts.epilogue(fontSize: 11, color: AppColors.gris3),
+              textAlign: TextAlign.center),
 
           const SizedBox(height: 24),
           Row(children: [
@@ -155,21 +178,28 @@ class _ScannerScreenState extends State<ScannerScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Text('ou saisir manuellement',
-                style: GoogleFonts.epilogue(fontSize: 11, color: AppColors.gris3)),
+                  style: GoogleFonts.epilogue(
+                      fontSize: 11, color: AppColors.gris3)),
             ),
             const Expanded(child: Divider(color: AppColors.gris2)),
           ]),
           const SizedBox(height: 16),
 
           OutlinedButton.icon(
-            onPressed: () {},
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const RechercheScreen()),
+            ),
             icon: const Icon(Icons.search_rounded, color: AppColors.rouge),
             label: Text('Recherche manuelle',
-              style: GoogleFonts.syne(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.rouge)),
+                style: GoogleFonts.syne(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.rouge)),
             style: OutlinedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 48),
+              minimumSize: const Size(double.infinity, 50),
               side: const BorderSide(color: AppColors.rouge, width: 1.5),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
             ),
           ),
         ],
@@ -212,8 +242,9 @@ class _ScannerOverlayPainter extends CustomPainter {
     final path = Path()
       ..addRect(Rect.fromLTWH(0, 0, size.width, size.height))
       ..addRRect(RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(cx, cy), width: hw * 2, height: hh * 2),
-        const Radius.circular(8)))
+          Rect.fromCenter(
+              center: Offset(cx, cy), width: hw * 2, height: hh * 2),
+          const Radius.circular(8)))
       ..fillType = PathFillType.evenOdd;
     canvas.drawPath(path, paint);
 
@@ -225,8 +256,10 @@ class _ScannerOverlayPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     const len = 24.0;
-    final l = cx - hw; final r = cx + hw;
-    final t = cy - hh; final b = cy + hh;
+    final l = cx - hw;
+    final r = cx + hw;
+    final t = cy - hh;
+    final b = cy + hh;
 
     // Coin haut-gauche
     canvas.drawLine(Offset(l, t + len), Offset(l, t), cp);

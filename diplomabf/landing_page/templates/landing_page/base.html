@@ -18,6 +18,7 @@
 <div class="noise" aria-hidden="true"></div>
 <canvas id="particleCanvas" style="position:fixed;inset:0;z-index:0;pointer-events:none;" aria-hidden="true"></canvas>
 
+{% block navbar %}
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar" id="navbar" role="navigation" aria-label="Navigation principale">
   <div class="nav-container">
@@ -45,9 +46,11 @@
     </button>
   </div>
 </nav>
+{% endblock %}
 
 {% block content %}{% endblock %}
 
+{% block footer %}
 <!-- ===== FOOTER ===== -->
 <footer role="contentinfo">
   <div class="footer-grid">
@@ -96,6 +99,7 @@
     <div class="footer-badge"><span>⛓</span><span>Propulsé par Algorand Blockchain</span></div>
   </div>
 </footer>
+{% endblock %}
 
 <script src="{% static 'landing_page/js/main.js' %}"></script>
 {% block extra_js %}{% endblock %}

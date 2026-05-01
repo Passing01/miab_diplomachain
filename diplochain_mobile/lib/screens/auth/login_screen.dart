@@ -4,6 +4,7 @@ import '../../services/api_service.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common_widgets.dart';
 import '../home/home_screen.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -135,20 +136,19 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                               style: GoogleFonts.epilogue(fontSize: 12, color: AppColors.sub)),
                             const SizedBox(height: 24),
 
-                            // Email
-                            Text('EMAIL', style: GoogleFonts.epilogue(
+                            // Username
+                            Text('NOM D\'UTILISATEUR', style: GoogleFonts.epilogue(
                               fontSize: 10, letterSpacing: 1.5, fontWeight: FontWeight.w600, color: AppColors.sub)),
                             const SizedBox(height: 6),
                             TextFormField(
                               controller: _emailCtrl,
-                              keyboardType: TextInputType.emailAddress,
+                              keyboardType: TextInputType.text,
                               decoration: const InputDecoration(
-                                hintText: 'recruteur@entreprise.bf',
-                                prefixIcon: Icon(Icons.email_outlined, color: AppColors.gris3, size: 20),
+                                hintText: 'Ex: recruteur01',
+                                prefixIcon: Icon(Icons.person_outline, color: AppColors.gris3, size: 20),
                               ),
                               validator: (v) {
-                                if (v == null || v.isEmpty) return 'Email requis';
-                                if (!v.contains('@')) return 'Email invalide';
+                                if (v == null || v.isEmpty) return 'Nom d\'utilisateur requis';
                                 return null;
                               },
                             ),
@@ -216,6 +216,14 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                     Text('Burkina Faso — 2025–2026',
                       style: GoogleFonts.epilogue(fontSize: 11, color: Colors.white.withOpacity(0.3),
                         letterSpacing: 1)),
+                    const SizedBox(height: 16),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const RegisterScreen()),
+                      ),
+                      child: Text('Pas encore de compte ? S\'inscrire',
+                        style: GoogleFonts.epilogue(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w600)),
+                    ),
                     const SizedBox(height: 32),
                   ],
                 ),

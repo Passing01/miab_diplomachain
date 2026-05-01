@@ -149,3 +149,15 @@ class VerifyDiplomaView(views.APIView):
             }, status=status.HTTP_200_OK)
         except Diploma.DoesNotExist:
             return Response({"status": "Invalid", "message": "Aucun diplôme trouvé avec ces informations dans notre registre."}, status=status.HTTP_404_NOT_FOUND)
+
+from .serializers import VerificationLogSerializer
+
+class VerificationLogViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = VerificationLogSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        # Recruiters see their own logs
+        if self.request.user.role == 'recruiter':
+            return VerificationLog.objects.filter(recruiter=self.request.user).order_by('-verified_at')
+        return VerificationLog.objects.none()

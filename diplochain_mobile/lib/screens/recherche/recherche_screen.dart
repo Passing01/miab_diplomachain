@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:file_picker/file_picker.dart';
 import '../../services/api_service.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common_widgets.dart';
@@ -38,6 +39,33 @@ class _RechercheScreenState extends State<RechercheScreen> {
             statut: StatutDiplome.introuvable,
           );
     });
+  }
+  
+  Future<void> _choisirFichier() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+      );
+
+    if (result != null && result.files.single.path != null) {
+      setState(() { _loading = true; _searched = true; _resultat = null; });
+      final res = await _apiService.verifierParFichier(result.files.single.path!);
+      
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        if (res['success']) {
+          _resultat = res['diplome'];
+        } else {
+          showError(context, res['message'] ?? 'Erreur lors de la vérification du fichier');
+          _searched = false;
+        }
+      });
+    }
+    } catch (e) {
+      if (mounted) showError(context, 'Erreur lors de la sélection du fichier');
+    }
   }
 
   void _reinitialiser() {
@@ -160,6 +188,18 @@ class _RechercheScreenState extends State<RechercheScreen> {
           Text('Entrez le matricule ou le nom complet du candidat pour vérifier l\'authenticité de son diplôme.',
             style: GoogleFonts.epilogue(fontSize: 13, color: AppColors.sub, height: 1.6),
             textAlign: TextAlign.center),
+
+          const SizedBox(height: 24),
+          
+          ElevatedButton.icon(
+            onPressed: _choisirFichier,
+            icon: const Icon(Icons.upload_file_rounded),
+            label: const Text('Importer un diplôme PDF'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.noir,
+              minimumSize: const Size(220, 48),
+            ),
+          ),
 
           const SizedBox(height: 32),
 

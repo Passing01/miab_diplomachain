@@ -1,4 +1,5 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
@@ -81,3 +82,39 @@ def register_view(request):
 def logout_view(request):
     logout(request)
     return redirect('home')
+
+from django.contrib.auth.decorators import login_required
+@login_required
+def profile_view(request):
+    if request.path.startswith('/api/'):
+        return JsonResponse({
+            'id': request.user.id,
+            'username': request.user.username,
+            'email': request.user.email,
+            'first_name': request.user.first_name,
+            'last_name': request.user.last_name,
+            'role': request.user.role,
+            'company_name': request.user.company_name,
+            'job_title': request.user.job_title,
+            'institution_name': request.user.institution_name,
+        })
+    return render(request, 'accounts/profile.html')
+
+from django.http import JsonResponse
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def api_profile_view(request):
+    return Response({
+        'id': request.user.id,
+        'username': request.user.username,
+        'email': request.user.email,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+        'role': request.user.role,
+        'company_name': request.user.company_name,
+        'job_title': request.user.job_title,
+        'institution_name': request.user.institution_name,
+    })

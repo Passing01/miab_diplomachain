@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-om8*e%2cwl0c#9z)lrva+g7s*^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['miab-diplomachain.onrender.com', '127.0.0.1', 'localhost', '0.0.0.0']
+ALLOWED_HOSTS = ['miab-diplomachain.onrender.com', '127.0.0.1', 'localhost', '0.0.0.0', '192.168.1.95']
 
 
 # Application definition
@@ -52,6 +52,11 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
+
+AUTHENTICATION_BACKENDS = [
+    'accounts.backends.EmailOrUsernameModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

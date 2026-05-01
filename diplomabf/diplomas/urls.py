@@ -1,10 +1,11 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import DiplomaViewSet, InstitutionViewSet, VerifyDiplomaView, public_verify_view
+from .views import DiplomaViewSet, InstitutionViewSet, VerifyDiplomaView, public_verify_view, VerificationLogViewSet
 
 router = DefaultRouter()
 router.register(r'diplomas', DiplomaViewSet)
 router.register(r'institutions', InstitutionViewSet)
+router.register(r'verifications', VerificationLogViewSet, basename='verification-logs')
 
 urlpatterns = [
     path('verify-ui/', public_verify_view, name='diploma_verify_ui'),
