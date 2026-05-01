@@ -1,0 +1,291 @@
+{% extends 'landing_page/base.html' %}
+{% load static %}
+
+{% block title %}DiploChain — Inscription{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 140px 24px 80px;
+        background: var(--gradient-hero);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 550px;
+        background: var(--gradient-card);
+        border: 1px solid var(--border-glow);
+        border-radius: var(--radius-lg);
+        padding: 40px;
+        backdrop-filter: blur(20px);
+        box-shadow: var(--shadow-deep), 0 0 60px rgba(66, 153, 225, 0.1);
+        position: relative;
+        z-index: 2;
+        animation: fadeInUp 0.6s ease;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .auth-header h1 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .auth-header p {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .role-toggle {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 32px;
+        background: rgba(16, 30, 56, 0.4);
+        padding: 6px;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border);
+    }
+
+    .role-option {
+        position: relative;
+    }
+
+    .role-option input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+
+    .role-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: var(--transition);
+        border: 1px solid transparent;
+        text-align: center;
+    }
+
+    .role-label i {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+    }
+
+    .role-label span {
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .role-option input:checked + .role-label {
+        background: var(--gradient-accent);
+        color: white;
+        box-shadow: 0 4px 15px rgba(66, 153, 225, 0.3);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    @media (max-width: 500px) {
+        .form-grid { grid-template-columns: 1fr; }
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        width: 100%;
+        background: rgba(16, 30, 56, 0.5);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px 16px;
+        color: var(--text-primary);
+        font-family: inherit;
+        font-size: 0.95rem;
+        transition: var(--transition);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--blue-400);
+        background: rgba(16, 30, 56, 0.8);
+        box-shadow: 0 0 15px rgba(66, 153, 225, 0.2);
+    }
+
+    .auth-btn {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .auth-footer {
+        margin-top: 24px;
+        text-align: center;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .auth-footer a {
+        color: var(--blue-400);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .inst-fields, .recruiter-fields {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="page-hero-grid"></div>
+    <div class="page-hero-orb"></div>
+    
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Créer un compte</h1>
+            <p>Rejoignez l'écosystème DiploChain</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div style="padding: 12px; border-radius: 8px; background: rgba(245, 101, 101, 0.1); border: 1px solid var(--red-400); color: var(--red-300); margin-bottom: 20px; font-size: 0.85rem; text-align: center;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="role-toggle">
+                <div class="role-option">
+                    <input type="radio" name="role" id="role_student" value="student" checked onchange="toggleFields()">
+                    <label for="role_student" class="role-label">
+                        <i>🎓</i>
+                        <span>Étudiant</span>
+                    </label>
+                </div>
+                <div class="role-option">
+                    <input type="radio" name="role" id="role_institution" value="institution" onchange="toggleFields()">
+                    <label for="role_institution" class="role-label">
+                        <i>🏛</i>
+                        <span>Université</span>
+                    </label>
+                </div>
+                <div class="role-option">
+                    <input type="radio" name="role" id="role_recruiter" value="recruiter" onchange="toggleFields()">
+                    <label for="role_recruiter" class="role-label">
+                        <i>💼</i>
+                        <span>Recruteur</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="first_name">Prénom</label>
+                    <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Jean" required>
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Nom</label>
+                    <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Dupont" required>
+                </div>
+                <div class="form-group full">
+                    <label for="email">Email professionnel / universitaire</label>
+                    <input type="email" name="email" id="email" class="form-control" placeholder="jean.dupont@email.com" required>
+                </div>
+                <div class="form-group full">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input type="text" name="username" id="username" class="form-control" placeholder="jdupont" required>
+                </div>
+                
+                <div class="form-group full inst-fields" id="inst_field_name">
+                    <label for="institution_name">Nom de l'Université / École</label>
+                    <input type="text" name="institution_name" id="institution_name" class="form-control" placeholder="ex: Université Joseph Ki-Zerbo">
+                </div>
+
+                <div class="form-group recruiter-fields" id="rec_field_company">
+                    <label for="company_name">Nom de l'Entreprise</label>
+                    <input type="text" name="company_name" id="company_name" class="form-control" placeholder="ex: Orange Burkina">
+                </div>
+                <div class="form-group recruiter-fields" id="rec_field_job">
+                    <label for="job_title">Votre Fonction</label>
+                    <input type="text" name="job_title" id="job_title" class="form-control" placeholder="ex: DRH">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" name="password" id="password" class="form-control" placeholder="••••••••" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirmation</label>
+                    <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary auth-btn">S'inscrire maintenant</button>
+        </form>
+
+        <div class="auth-footer">
+            Déjà inscrit ? <a href="{% url 'login' %}">Se connecter</a>
+        </div>
+    </div>
+</section>
+
+<script>
+    function toggleFields() {
+        const role = document.querySelector('input[name="role"]:checked').value;
+        const instFields = document.querySelectorAll('.inst-fields');
+        const recruiterFields = document.querySelectorAll('.recruiter-fields');
+
+        // Reset all
+        instFields.forEach(f => f.style.display = 'none');
+        recruiterFields.forEach(f => f.style.display = 'none');
+        document.getElementById('institution_name').required = false;
+        document.getElementById('company_name').required = false;
+        document.getElementById('job_title').required = false;
+
+        if (role === 'institution') {
+            instFields.forEach(f => f.style.display = 'block');
+            document.getElementById('institution_name').required = true;
+        } else if (role === 'recruiter') {
+            recruiterFields.forEach(f => f.style.display = 'block');
+            document.getElementById('company_name').required = true;
+            document.getElementById('job_title').required = true;
+        }
+    }
+</script>
+{% endblock %}

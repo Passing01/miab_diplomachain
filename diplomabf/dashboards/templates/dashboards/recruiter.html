@@ -1,0 +1,56 @@
+{% extends 'landing_page/base.html' %}
+
+{% block title %}Tableau de bord Recruteur{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="page-hero-grid"></div>
+    <div class="section-container page-hero-content">
+        <h1 class="page-title">Espace Recruteur</h1>
+        <p class="page-lead">Bienvenue, {{ user.first_name }} ({{ user.job_title }} @ {{ user.company_name }})</p>
+    </div>
+</section>
+
+<section style="padding: 60px 0;">
+    <div class="section-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <h2 class="section-title" style="margin-bottom: 0;">Vos Vérifications Récentes</h2>
+            <a href="{% url 'diploma_verify_ui' %}" class="btn btn-primary">Vérifier un nouveau diplôme</a>
+        </div>
+
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: rgba(16, 30, 56, 0.5); border-bottom: 1px solid var(--border);">
+                        <th style="padding: 16px; text-align: left; font-size: 0.85rem; color: var(--text-secondary);">Diplôme</th>
+                        <th style="padding: 16px; text-align: left; font-size: 0.85rem; color: var(--text-secondary);">Titulaire</th>
+                        <th style="padding: 16px; text-align: left; font-size: 0.85rem; color: var(--text-secondary);">Date de vérification</th>
+                        <th style="padding: 16px; text-align: left; font-size: 0.85rem; color: var(--text-secondary);">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in verifications %}
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 16px;">
+                            <div style="font-weight: 600; color: var(--text-primary);">{{ log.diploma.degree_name }}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">{{ log.diploma.institution.name }}</div>
+                        </td>
+                        <td style="padding: 16px; font-size: 0.9rem;">{{ log.diploma.student_first_name }} {{ log.diploma.student_last_name }}</td>
+                        <td style="padding: 16px; font-size: 0.85rem; color: var(--text-muted);">{{ log.verified_at|date:"d/m/Y H:i" }}</td>
+                        <td style="padding: 16px;">
+                            <a href="{% url 'diploma_verify_ui' %}?id={{ log.diploma.unique_identifier }}" class="btn btn-secondary btn-sm">Revoir</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="padding: 40px; text-align: center; color: var(--text-muted);">
+                            Vous n'avez pas encore effectué de vérification.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,655 @@
+openapi: 3.0.3
+info:
+  title: Miab Diplomachain API
+  version: 1.0.0
+  description: API pour la certification et la vérification de diplômes via Blockchain
+    Algorand.
+paths:
+  /api/accounts/api/login/:
+    post:
+      operationId: accounts_api_login_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /api/accounts/api/register/:
+    post:
+      operationId: accounts_api_register_create
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/accounts/profile/:
+    get:
+      operationId: accounts_profile_retrieve
+      tags:
+      - accounts
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    put:
+      operationId: accounts_profile_update
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    patch:
+      operationId: accounts_profile_partial_update
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/accounts/token/refresh/:
+    post:
+      operationId: accounts_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - accounts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/core/diplomas/:
+    get:
+      operationId: core_diplomas_list
+      tags:
+      - core
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Diploma'
+          description: ''
+    post:
+      operationId: core_diplomas_create
+      tags:
+      - core
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Diploma'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Diploma'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Diploma'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Diploma'
+          description: ''
+  /api/core/diplomas/{id}/:
+    get:
+      operationId: core_diplomas_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this diploma.
+        required: true
+      tags:
+      - core
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Diploma'
+          description: ''
+    put:
+      operationId: core_diplomas_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this diploma.
+        required: true
+      tags:
+      - core
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Diploma'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Diploma'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Diploma'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Diploma'
+          description: ''
+    patch:
+      operationId: core_diplomas_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this diploma.
+        required: true
+      tags:
+      - core
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDiploma'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDiploma'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDiploma'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Diploma'
+          description: ''
+    delete:
+      operationId: core_diplomas_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this diploma.
+        required: true
+      tags:
+      - core
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/core/diplomas/{id}/anchor/:
+    post:
+      operationId: core_diplomas_anchor_create
+      description: Anchors the diploma hash to Algorand.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this diploma.
+        required: true
+      tags:
+      - core
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Diploma'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Diploma'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Diploma'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Diploma'
+          description: ''
+  /api/core/institutions/:
+    get:
+      operationId: core_institutions_list
+      tags:
+      - core
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Institution'
+          description: ''
+  /api/core/institutions/{id}/:
+    get:
+      operationId: core_institutions_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this institution.
+        required: true
+      tags:
+      - core
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Institution'
+          description: ''
+  /api/core/verify/:
+    get:
+      operationId: core_verify_retrieve
+      description: Public endpoint to verify a diploma.
+      parameters:
+      - in: query
+        name: hash
+        schema:
+          type: string
+        description: SHA-256 hash
+      - in: query
+        name: id
+        schema:
+          type: string
+        description: Unique identifier (12 chars)
+      tags:
+      - core
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Diploma'
+          description: ''
+components:
+  schemas:
+    Diploma:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        student_first_name:
+          type: string
+          maxLength: 100
+        student_last_name:
+          type: string
+          maxLength: 100
+        student_id_number:
+          type: string
+          title: Numéro d'étudiant
+          maxLength: 50
+        degree_name:
+          type: string
+          title: Intitulé du diplôme
+          maxLength: 255
+        major:
+          type: string
+          maxLength: 255
+        graduation_date:
+          type: string
+          format: date
+        institution:
+          type: integer
+        institution_name:
+          type: string
+          readOnly: true
+        pdf_file:
+          type: string
+          format: uri
+          nullable: true
+        unique_identifier:
+          type: string
+          readOnly: true
+        document_hash:
+          type: string
+          readOnly: true
+          nullable: true
+        blockchain_tx_id:
+          type: string
+          readOnly: true
+          nullable: true
+          title: ID Transaction Algorand
+        is_verified:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - blockchain_tx_id
+      - created_at
+      - degree_name
+      - document_hash
+      - graduation_date
+      - id
+      - institution
+      - institution_name
+      - is_verified
+      - student_first_name
+      - student_id_number
+      - student_last_name
+      - unique_identifier
+    Institution:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        acronym:
+          type: string
+          maxLength: 20
+        website:
+          type: string
+          format: uri
+          maxLength: 200
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - name
+    PatchedDiploma:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        student_first_name:
+          type: string
+          maxLength: 100
+        student_last_name:
+          type: string
+          maxLength: 100
+        student_id_number:
+          type: string
+          title: Numéro d'étudiant
+          maxLength: 50
+        degree_name:
+          type: string
+          title: Intitulé du diplôme
+          maxLength: 255
+        major:
+          type: string
+          maxLength: 255
+        graduation_date:
+          type: string
+          format: date
+        institution:
+          type: integer
+        institution_name:
+          type: string
+          readOnly: true
+        pdf_file:
+          type: string
+          format: uri
+          nullable: true
+        unique_identifier:
+          type: string
+          readOnly: true
+        document_hash:
+          type: string
+          readOnly: true
+          nullable: true
+        blockchain_tx_id:
+          type: string
+          readOnly: true
+          nullable: true
+          title: ID Transaction Algorand
+        is_verified:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        institution_name:
+          type: string
+          nullable: true
+          maxLength: 255
+        phone_number:
+          type: string
+          nullable: true
+          maxLength: 20
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+    RoleEnum:
+      enum:
+      - student
+      - institution
+      - recruiter
+      - admin
+      type: string
+      description: |-
+        * `student` - Étudiant
+        * `institution` - Institution/Université
+        * `recruiter` - Recruteur/Employeur
+        * `admin` - Administrateur
+    TokenObtainPair:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - password
+      - refresh
+      - username
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        institution_name:
+          type: string
+          nullable: true
+          maxLength: 255
+        phone_number:
+          type: string
+          nullable: true
+          maxLength: 20
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+      required:
+      - id
+      - password
+      - username
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

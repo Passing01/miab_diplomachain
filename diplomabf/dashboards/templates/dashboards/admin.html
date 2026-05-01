@@ -1,0 +1,42 @@
+{% extends 'landing_page/base.html' %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="page-hero-grid"></div>
+    <div class="section-container page-hero-content">
+        <h1 class="page-title">Supervision Système</h1>
+        <p class="page-lead">Statistiques globales de la plateforme DiploChain.</p>
+    </div>
+</section>
+
+<section style="padding: 60px 0;">
+    <div class="section-container">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 48px;">
+            <div class="stat-block">
+                <div class="stat-block-value">{{ stats.total_users }}</div>
+                <div class="stat-block-label">Utilisateurs Totaux</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-block-value">{{ stats.total_institutions }}</div>
+                <div class="stat-block-label">Universités Partenaires</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-block-value">{{ stats.total_diplomas }}</div>
+                <div class="stat-block-label">Diplômes Enregistrés</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-block-value">{{ stats.verified_diplomas }}</div>
+                <div class="stat-block-label">Certifications Blockchain</div>
+            </div>
+        </div>
+
+        <div class="card" style="text-align: center; padding: 48px;">
+            <h3 class="card-title">Accès Administration Complète</h3>
+            <p class="card-desc" style="margin-bottom: 24px;">Pour gérer les utilisateurs, les institutions et les paramètres système avancés.</p>
+            <a href="/admin/" class="btn btn-primary">Ouvrir Django Admin</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

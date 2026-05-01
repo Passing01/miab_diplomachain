@@ -1,0 +1,73 @@
+{% extends 'landing_page/base.html' %}
+
+{% block title %}Tableau de bord Étudiant{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="page-hero-grid"></div>
+    <div class="section-container page-hero-content">
+        <h1 class="page-title">Mes Diplômes</h1>
+        <p class="page-lead">Consultez et partagez vos certifications authentifiées sur la blockchain.</p>
+    </div>
+</section>
+
+<section style="padding: 60px 0;">
+    <div class="section-container">
+        <div class="grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px;">
+            {% for diploma in diplomas %}
+            <div class="card">
+                <div class="card-icon">🎓</div>
+                <h3 class="card-title">{{ diploma.degree_name }}</h3>
+                <p class="card-desc">{{ diploma.institution.name }}</p>
+                <div style="margin-top: 16px;">
+                    <span class="badge {% if diploma.blockchain_tx_id %}badge-green{% else %}badge-amber{% endif %}">
+                        {% if diploma.blockchain_tx_id %}Vérifié Blockchain{% else %}En attente{% endif %}
+                    </span>
+                </div>
+                <div style="margin-top: 20px;">
+                    <p style="font-size: 0.75rem; color: var(--text-muted);">ID: {{ diploma.unique_identifier }}</p>
+                    <a href="{% url 'diploma_verify_ui' %}?id={{ diploma.unique_identifier }}" class="btn btn-secondary btn-sm" style="margin-top: 10px; width: 100%;">Voir l'attestation</a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="card" style="grid-column: 1/-1; text-align: center;">
+                <p class="card-desc">Aucun diplôme trouvé pour votre compte.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <h2 class="section-title" style="margin-top: 60px;">Historique des Vérifications</h2>
+        <p class="page-lead" style="margin-bottom: 24px; font-size: 1rem;">Sachez qui a consulté et vérifié l'authenticité de vos diplômes.</p>
+        
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: rgba(16, 30, 56, 0.5); border-bottom: 1px solid var(--border);">
+                        <th style="padding: 16px; text-align: left; font-size: 0.85rem; color: var(--text-secondary);">Recruteur / Entreprise</th>
+                        <th style="padding: 16px; text-align: left; font-size: 0.85rem; color: var(--text-secondary);">Diplôme Consulté</th>
+                        <th style="padding: 16px; text-align: left; font-size: 0.85rem; color: var(--text-secondary);">Date & Heure</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in verifications %}
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 16px;">
+                            <div style="font-weight: 600; color: var(--text-primary);">{{ log.recruiter.first_name }} {{ log.recruiter.last_name }}</div>
+                            <div style="font-size: 0.75rem; color: var(--cyan-400);">{{ log.recruiter.job_title }} @ {{ log.recruiter.company_name }}</div>
+                        </td>
+                        <td style="padding: 16px; font-size: 0.9rem;">{{ log.diploma.degree_name }}</td>
+                        <td style="padding: 16px; font-size: 0.85rem; color: var(--text-muted);">{{ log.verified_at|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" style="padding: 40px; text-align: center; color: var(--text-muted);">
+                            Aucune vérification n'a été effectuée sur vos diplômes pour le moment.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

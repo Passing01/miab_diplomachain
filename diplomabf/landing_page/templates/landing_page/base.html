@@ -29,9 +29,16 @@
       <button class="close-nav" id="closeNav" aria-label="Fermer">✕</button>
       <li><a href="{% url 'probleme' %}" {% if request.resolver_match.url_name == 'probleme' %}class="active"{% endif %}>Le Problème</a></li>
       <li><a href="{% url 'solution' %}" {% if request.resolver_match.url_name == 'solution' %}class="active"{% endif %}>La Solution</a></li>
+      <li><a href="{% url 'diploma_verify_ui' %}" {% if request.resolver_match.url_name == 'diploma_verify_ui' %}class="active"{% endif %}>Vérification Publique</a></li>
       <li><a href="{% url 'comment' %}" {% if request.resolver_match.url_name == 'comment' %}class="active"{% endif %}>Fonctionnement</a></li>
       <li><a href="{% url 'technologie' %}" {% if request.resolver_match.url_name == 'technologie' %}class="active"{% endif %}>Technologies</a></li>
-      <li><a href="{% url 'home' %}#contact" class="nav-cta">Rejoindre le projet</a></li>
+      {% if user.is_authenticated %}
+        <li><a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}class="active"{% endif %}>Tableau de bord</a></li>
+        <li><a href="{% url 'logout' %}" class="nav-cta">Déconnexion</a></li>
+      {% else %}
+        <li><a href="{% url 'login' %}" {% if request.resolver_match.url_name == 'login' %}class="active"{% endif %}>Connexion</a></li>
+        <li><a href="{% url 'register' %}" class="nav-cta">S'inscrire</a></li>
+      {% endif %}
     </ul>
     <button class="hamburger" id="hamburger" aria-label="Menu" aria-expanded="false">
       <span></span><span></span><span></span>
