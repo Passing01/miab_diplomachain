@@ -163,4 +163,34 @@ def emit_diploma(request):
         except Exception as e:
             messages.error(request, f"Erreur lors de l'émission : {e}")
 
-    return render(request, 'dashboards/emit.html', {'institution': inst})
+from diplomas.blockchain_utils import get_algod_client, get_treasury_account
+
+@login_required
+def blockchain_status(request):
+    """View for admin to check the status of the blockchain connection and treasury."""
+    if request.user.role != 'admin':
+        return redirect('dashboard')
+        
+    client = get_algod_client()
+    status_data = {
+        'connected': False,
+        'last_round': 0,
+        'treasury_address': None,
+        'treasury_balance': 0,
+        'error': None
+    }
+    
+    try:
+        status = client.status()
+        status_data['connected'] = True
+        status_data['last_round'] = status['last-round']
+        
+        _, addr, _ = get_treasury_account()
+        if addr:
+            status_data['treasury_address'] = addr
+            account_info = client.account_info(addr)
+            status_data['treasury_balance'] = account_info.get('amount', 0) / 1_000_000
+    except Exception as e:
+        status_data['error'] = str(e)
+        
+    return render(request, 'dashboards/blockchain_status.html', {'status': status_data})

@@ -81,24 +81,18 @@ SECRET_KEY="votre_cle_django"
 DEBUG=True
 ```
 
-### 2. Lancement
-```bash
-# Activer l'environnement
-source env/bin/activate
+### 2. Déploiement sur Render
+Pour déployer sur Render, utilisez les paramètres suivants :
+- **Build Command :** `./render-build.sh`
+- **Start Command :** `gunicorn diplomabf.wsgi:application`
+- **Environment Variables :** Copiez les valeurs de votre `.env` dans les "Environment Variables" de Render.
 
-# Migrations
-python manage.py migrate
-
-# Vérifier la blockchain
-python verify_blockchain.py
-
-# Lancer le serveur
-python manage.py runserver
-```
+Le script `render-build.sh` s'occupe automatiquement des migrations, des fichiers statiques et de la vérification initiale de la blockchain.
 
 ---
 
-## 🛡 Sécurité & Maintenance
+## 🛡 Sécurité & Supervision
+- **Suivi Blockchain :** Plus besoin de terminal ! Accédez à l'onglet **"État Blockchain"** depuis votre Dashboard Admin pour surveiller la connexion et le solde.
 - **Clés Privées :** Elles sont stockées en base de données. *Amélioration prévue : Chiffrement AES des clés au repos.*
 - **Trésorerie :** Doit être alimentée via le [Testnet Dispenser](https://bank.testnet.algorand.network/) pour continuer à financer les nouvelles institutions.
 

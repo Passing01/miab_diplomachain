@@ -35,7 +35,12 @@
         <div class="card" style="text-align: center; padding: 48px;">
             <h3 class="card-title">Accès Administration Complète</h3>
             <p class="card-desc" style="margin-bottom: 24px;">Pour gérer les utilisateurs, les institutions et les paramètres système avancés.</p>
-            <a href="/admin/" class="btn btn-primary">Ouvrir Django Admin</a>
+            <div style="display: flex; gap: 16px; justify-content: center;">
+                <a href="/admin/" class="btn btn-secondary">Ouvrir Django Admin</a>
+                <a href="{% url 'blockchain_status' %}" class="btn btn-primary">
+                    <i class="fas fa-link" style="margin-right: 8px;"></i>État Blockchain
+                </a>
+            </div>
         </div>
     </div>
 </section>

@@ -10,4 +10,5 @@ urlpatterns = [
     path('institution/search/', views.search_diplomas, name='search_diplomas'),
     path('recruiter/', views.recruiter_dashboard, name='dashboard_recruiter'),
     path('admin-panel/', views.admin_dashboard, name='dashboard_admin'),
+    path('admin-panel/blockchain-status/', views.blockchain_status, name='blockchain_status'),
 ]

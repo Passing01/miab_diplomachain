@@ -1,0 +1,63 @@
+{% extends 'landing_page/base.html' %}
+
+{% block title %}État Blockchain - Miab{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+    <div class="page-hero-grid"></div>
+    <div class="section-container page-hero-content">
+        <h1 class="page-title">Santé Blockchain</h1>
+        <p class="page-lead">Surveillance en temps réel de l'infrastructure Algorand.</p>
+    </div>
+</section>
+
+<section style="padding: 60px 0;">
+    <div class="section-container" style="max-width: 800px;">
+        <div class="card" style="padding: 32px; border-radius: 16px; background: rgba(16, 30, 56, 0.4);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+                <h3 style="margin: 0; color: white;">État de la Connexion</h3>
+                {% if status.connected %}
+                    <span style="background: rgba(72, 187, 120, 0.2); color: #48bb78; padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 0.8rem;">● CONNECTÉ</span>
+                {% else %}
+                    <span style="background: rgba(245, 101, 101, 0.2); color: #f56565; padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 0.8rem;">● DÉCONNECTÉ</span>
+                {% endif %}
+            </div>
+
+            {% if status.error %}
+                <div style="background: rgba(245, 101, 101, 0.1); border: 1px solid #f56565; color: #f56565; padding: 16px; border-radius: 8px; margin-bottom: 24px; font-family: monospace; font-size: 0.85rem;">
+                    <strong>Erreur :</strong> {{ status.error }}
+                </div>
+            {% endif %}
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px;">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Dernier Round (Bloc)</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: white;">#{{ status.last_round }}</div>
+                </div>
+                <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px;">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Solde Trésorerie</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--amber-400);">{{ status.treasury_balance|floatformat:2 }} ALGO</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 32px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px;">
+                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Adresse de Trésorerie</div>
+                <div style="font-size: 0.9rem; font-family: monospace; color: var(--blue-300); word-break: break-all;">
+                    {{ status.treasury_address|default:"Non configurée dans le .env" }}
+                </div>
+            </div>
+
+            <div style="margin-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; display: flex; gap: 16px;">
+                <a href="https://bank.testnet.algorand.network/" target="_blank" class="btn btn-secondary" style="flex: 1; font-size: 0.85rem;">Recharger ALGO</a>
+                <a href="{% url 'dashboard_admin' %}" class="btn btn-primary" style="flex: 1; font-size: 0.85rem;">Retour Dashboard</a>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; text-align: center;">
+            <p style="color: var(--text-muted); font-size: 0.85rem;">
+                <i class="fas fa-info-circle"></i> Cette page interroge directement le noeud Algorand via l'API AlgoNode.
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}
