@@ -87,7 +87,15 @@ Pour déployer sur Render, utilisez les paramètres suivants :
 - **Start Command :** `gunicorn diplomabf.wsgi:application`
 - **Environment Variables :** Copiez les valeurs de votre `.env` dans les "Environment Variables" de Render.
 
-Le script `render-build.sh` s'occupe automatiquement des migrations, des fichiers statiques et de la vérification initiale de la blockchain.
+#### 🗄️ Base de Données sur Render
+Sur Render, le système de fichiers est temporaire (éphémère). Si vous utilisez SQLite (`db.sqlite3`), vos données seront effacées à chaque redémarrage.
+**Pour une base persistante :**
+1. Sur votre tableau de bord Render, cliquez sur **"New"** > **"PostgreSQL"**.
+2. Une fois créée, copiez la **"Internal Database URL"**.
+3. Dans les paramètres de votre service Web (Django), ajoutez une variable d'environnement nommée `DATABASE_URL` et collez l'URL.
+4. Le projet est configuré pour détecter automatiquement cette URL et passer de SQLite à PostgreSQL.
+
+Le script `render-build.sh` s'occupe automatiquement des migrations sur la nouvelle base.
 
 ---
 
