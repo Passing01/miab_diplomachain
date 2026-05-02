@@ -24,18 +24,9 @@ def login_view(request):
         u = request.POST.get('username')
         p = request.POST.get('password')
         
-        # 1. Try traditional username authentication
-        user = authenticate(username=u, password=p)
+        # The custom backend handles both username and email automatically
+        user = authenticate(request, username=u, password=p)
         
-        # 2. If it fails, try email authentication
-        if not user:
-            try:
-                # Find the username associated with this email
-                user_obj = CustomUser.objects.get(email=u)
-                user = authenticate(username=user_obj.username, password=p)
-            except CustomUser.DoesNotExist:
-                user = None
-
         if user:
             login(request, user)
             return redirect('dashboard')
@@ -73,7 +64,8 @@ def register_view(request):
                     inst.blockchain_mnemonic = mnemonic_phrase
                     inst.save()
                 
-                login(request, user)
+                # Specify backend to avoid 'multiple authentication backends' error
+                login(request, user, backend='accounts.backends.EmailOrUsernameModelBackend')
                 return redirect('dashboard')
             except Exception as e:
                 messages.error(request, f"Erreur: {e}")
