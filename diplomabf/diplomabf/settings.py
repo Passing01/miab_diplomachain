@@ -55,7 +55,6 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 
 AUTHENTICATION_BACKENDS = [
     'accounts.backends.EmailOrUsernameModelBackend',
-    'django.contrib.auth.backends.ModelBackend',
 ]
 
 MIDDLEWARE = [
