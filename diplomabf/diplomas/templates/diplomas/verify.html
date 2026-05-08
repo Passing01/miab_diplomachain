@@ -152,8 +152,8 @@
     <div class="section-container">
         <div class="verify-card">
             <div class="verify-tabs">
-                <button class="tab-btn active" onclick="switchTab('id')">Par ID Unique</button>
-                <button class="tab-btn" onclick="switchTab('file')">Par Fichier PDF</button>
+                <button class="tab-btn active" onclick="switchTab('id', this)">Par ID Unique</button>
+                <button class="tab-btn" onclick="switchTab('file', this)">Par Fichier PDF</button>
             </div>
 
             <div id="tab_id">
@@ -196,10 +196,10 @@
 <script>
 let currentTab = 'id';
 
-function switchTab(tab) {
+function switchTab(tab, btn) {
     currentTab = tab;
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
+    btn.classList.add('active');
     
     document.getElementById('tab_id').style.display = tab === 'id' ? 'block' : 'none';
     document.getElementById('tab_file').style.display = tab === 'file' ? 'block' : 'none';
