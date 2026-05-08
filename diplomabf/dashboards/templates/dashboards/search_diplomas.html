@@ -81,7 +81,7 @@
 {% if query %}
 <div class="results-box">
     <div style="padding: 16px 24px; border-bottom: 1px solid #eee; font-weight: 700;">
-        Résultats pour "{{ query }}" ({{ results.count }})
+        Résultats pour "{{ query }}" ({{ results_count }})
     </div>
     <table class="table-res">
         <thead>
@@ -101,7 +101,11 @@
                 <td>{{ diploma.degree_name }}</td>
                 <td>{{ diploma.graduation_date|date:"d / m / Y" }}</td>
                 <td>
-                    <a href="{{ diploma.pdf_file.url }}" target="_blank" class="btn" style="background: #f0f0f0; color: #333; padding: 4px 12px; font-size: 0.8rem; border: 1px solid #ccc; text-decoration: none;">Voir PDF</a>
+                    {% if diploma.pdf_file %}
+                        <a href="{% url 'diploma_pdf' diploma.id %}" target="_blank" class="btn" style="background: #f0f0f0; color: #333; padding: 4px 12px; font-size: 0.8rem; border: 1px solid #ccc; text-decoration: none;">Voir PDF</a>
+                    {% else %}
+                        <span style="color: #888; font-size: 0.8rem;">PDF indisponible</span>
+                    {% endif %}
                 </td>
             </tr>
             {% empty %}

@@ -1,0 +1,14 @@
+Backend web bugs log
+====================
+
+Format: [severity] area - description (file:line)
+
+[HIGH] web.dashboard - emit_diploma does not return a response on GET or after POST error, causing a 500 (diplomabf/dashboards/views.py:135)
+[MED] web.dashboard - template uses results.count while results can be a Python list; renders wrong or fails to show count (diplomabf/dashboards/templates/dashboards/search_diplomas.html:84)
+[MED] web.dashboard - pdf_file.url used without checking file exists, can raise ValueError when pdf missing (diplomabf/dashboards/templates/dashboards/institution_register.html:121)
+[MED] web.dashboard - pdf_file.url used without checking file exists, can raise ValueError when pdf missing (diplomabf/dashboards/templates/dashboards/search_diplomas.html:104)
+[LOW] web.dashboard - base dashboard sidebar text and links are institution-only, but profile uses this template for all roles (diplomabf/dashboards/templates/dashboards/base_dashboard.html:139)
+[MED] web.verify-ui - switchTab() uses implicit global event; fails in some browsers, tab switching breaks (diplomabf/diplomas/templates/diplomas/verify.html:118)
+[MED] web.dashboard - anchor POST likely missing CSRF token ({{ csrf_token }} is empty without {% csrf_token %} or csrf context processor), leading to 403 (diplomabf/dashboards/templates/dashboards/institution.html:150)
+[MED] web.dashboard - anchor POST likely missing CSRF token (same issue) (diplomabf/dashboards/templates/dashboards/institution_register.html:144)
+

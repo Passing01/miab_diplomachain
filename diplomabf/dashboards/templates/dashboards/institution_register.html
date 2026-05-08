@@ -118,7 +118,11 @@
                         {% else %}
                         <button class="btn-action">Détails</button>
                         {% endif %}
-                        <a href="{{ diploma.pdf_file.url }}" target="_blank" class="btn-action">PDF</a>
+                        {% if diploma.pdf_file %}
+                            <a href="{% url 'diploma_pdf' diploma.id %}" target="_blank" class="btn-action">PDF</a>
+                        {% else %}
+                            <span style="color: #888; font-size: 0.8rem;">PDF indisponible</span>
+                        {% endif %}
                     </div>
                 </td>
             </tr>
@@ -132,6 +136,21 @@
 </div>
 
 <script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 async function anchorDiploma(id) {
     const result = await Swal.fire({
         title: 'Confirmer l\'ancrage ?',
@@ -157,7 +176,7 @@ async function anchorDiploma(id) {
         const response = await fetch(`/api/core/diplomas/${id}/anchor/`, {
             method: 'POST',
             headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
+                'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json'
             }
         });
