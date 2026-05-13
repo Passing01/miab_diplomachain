@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
+from django.db import IntegrityError
 from .serializers import UserSerializer
 from .models import CustomUser
 from diplomas.models import Institution
@@ -38,13 +39,20 @@ def register_view(request):
     if request.method == 'POST':
         # Simple registration logic
         data = request.POST
+        username = (data.get('username') or '').strip()
+        email = (data.get('email') or '').strip()
+
         if data.get('password') != data.get('confirm_password'):
             messages.error(request, "Les mots de passe ne correspondent pas")
+        elif CustomUser.objects.filter(username=username).exists():
+            messages.error(request, "Ce nom d'utilisateur est déjà utilisé")
+        elif email and CustomUser.objects.filter(email=email).exists():
+            messages.error(request, "Cet email est déjà utilisé")
         else:
             try:
                 user = CustomUser.objects.create_user(
-                    username=data.get('username'),
-                    email=data.get('email'),
+                    username=username,
+                    email=email,
                     password=data.get('password'),
                     first_name=data.get('first_name'),
                     last_name=data.get('last_name'),
@@ -67,6 +75,8 @@ def register_view(request):
                 # Specify backend to avoid 'multiple authentication backends' error
                 login(request, user, backend='accounts.backends.EmailOrUsernameModelBackend')
                 return redirect('dashboard')
+            except IntegrityError:
+                messages.error(request, "Utilisateur déjà existant. Choisissez un autre identifiant.")
             except Exception as e:
                 messages.error(request, f"Erreur: {e}")
     return render(request, 'accounts/register.html')

@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from django.http import FileResponse
+from django.core.files.storage import default_storage
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from diplomas.models import Diploma, Institution, VerificationLog
@@ -98,6 +100,7 @@ def search_diplomas(request):
         
     query = request.GET.get('q', '')
     results = []
+    results_count = 0
     
     if query:
         try:
@@ -110,12 +113,14 @@ def search_diplomas(request):
                 Q(unique_identifier__icontains=query),
                 institution=inst
             )
+            results_count = results.count()
         except Institution.DoesNotExist:
             pass
 
     return render(request, 'dashboards/search_diplomas.html', {
         'query': query,
-        'results': results
+        'results': results,
+        'results_count': results_count
     })
 
 @login_required
@@ -162,6 +167,36 @@ def emit_diploma(request):
             return redirect('dashboard_institution')
         except Exception as e:
             messages.error(request, f"Erreur lors de l'émission : {e}")
+
+    return render(request, 'dashboards/emit.html')
+
+@login_required
+def diploma_pdf(request, diploma_id):
+    """Serve a diploma PDF when available, otherwise show a friendly error."""
+    if request.user.role != 'institution':
+        return redirect('dashboard')
+
+    try:
+        inst = Institution.objects.get(name=request.user.institution_name)
+    except Institution.DoesNotExist:
+        messages.error(request, "Votre institution n'est pas configurée.")
+        return redirect('dashboard')
+
+    try:
+        diploma = Diploma.objects.get(id=diploma_id, institution=inst)
+    except Diploma.DoesNotExist:
+        messages.error(request, "Ce diplôme est introuvable.")
+        return redirect('dashboard_institution')
+
+    if not diploma.pdf_file or not diploma.pdf_file.name:
+        messages.error(request, "Le fichier PDF est indisponible pour ce diplôme.")
+        return redirect(request.META.get('HTTP_REFERER', 'dashboard_institution'))
+
+    if not default_storage.exists(diploma.pdf_file.name):
+        messages.error(request, "Le fichier PDF est manquant sur le serveur.")
+        return redirect(request.META.get('HTTP_REFERER', 'dashboard_institution'))
+
+    return FileResponse(diploma.pdf_file.open('rb'), content_type='application/pdf')
 
 from diplomas.blockchain_utils import get_algod_client, get_treasury_account
 
