@@ -5,10 +5,11 @@ set -euo pipefail
 pip install -r requirements.txt
 
 # Run migrations
-python diplomabf/manage.py migrate
+python manage.py migrate
 
 # Collect static files
-python diplomabf/manage.py collectstatic --no-input
+python manage.py collectstatic --no-input
 
 # Optional: log blockchain connectivity in build output
-python diplomabf/manage.py check_blockchain
+python manage.py check_blockchain
+
