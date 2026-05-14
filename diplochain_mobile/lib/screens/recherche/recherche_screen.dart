@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:file_picker/file_picker.dart' as fp;
 import '../../services/api_service.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common_widgets.dart';
@@ -52,8 +52,8 @@ class _RechercheScreenState extends State<RechercheScreen> {
 
   Future<void> _choisirFichier() async {
     try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
+      final fp.FilePickerResult? result = await fp.FilePicker.pickFiles(
+        type: fp.FileType.custom,
         allowedExtensions: ['pdf'],
       );
 
