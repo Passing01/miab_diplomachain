@@ -1,47 +1,139 @@
-{% extends 'landing_page/base.html' %}
+{% extends 'dashboards/base_dashboard.html' %}
 
-{% block title %}Dashboard Admin{% endblock %}
+{% block dash_title %}Administration Globale{% endblock %}
 
-{% block content %}
-<section class="page-hero">
-    <div class="page-hero-grid"></div>
-    <div class="section-container page-hero-content">
-        <h1 class="page-title">Supervision Système</h1>
-        <p class="page-lead">Statistiques globales de la plateforme DiploChain.</p>
+{% block dash_content %}
+<style>
+    .admin-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+
+    .stat-card-admin {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        border: 1px solid #f1f5f9;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .treasury-card {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: white;
+        padding: 24px;
+        border-radius: 24px;
+        margin-bottom: 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .balance-badge {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #fbbf24;
+    }
+
+    .recent-activity {
+        background: white;
+        border-radius: 24px;
+        padding: 32px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    }
+    
+    .status-active { color: #166534; background: #dcfce7; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; }
+    .status-inactive { color: #991b1b; background: #fee2e2; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; }
+</style>
+
+<div class="treasury-card">
+    <div>
+        <h2 style="font-weight: 800; font-size: 1.5rem; margin-bottom: 8px;">Trésorerie Blockchain (Algorand)</h2>
+        <p style="opacity: 0.7;">Solde global disponible pour le financement des universités.</p>
     </div>
-</section>
-
-<section style="padding: 60px 0;">
-    <div class="section-container">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 48px;">
-            <div class="stat-block">
-                <div class="stat-block-value">{{ stats.total_users }}</div>
-                <div class="stat-block-label">Utilisateurs Totaux</div>
-            </div>
-            <div class="stat-block">
-                <div class="stat-block-value">{{ stats.total_institutions }}</div>
-                <div class="stat-block-label">Universités Partenaires</div>
-            </div>
-            <div class="stat-block">
-                <div class="stat-block-value">{{ stats.total_diplomas }}</div>
-                <div class="stat-block-label">Diplômes Enregistrés</div>
-            </div>
-            <div class="stat-block">
-                <div class="stat-block-value">{{ stats.verified_diplomas }}</div>
-                <div class="stat-block-label">Certifications Blockchain</div>
-            </div>
-        </div>
-
-        <div class="card" style="text-align: center; padding: 48px;">
-            <h3 class="card-title">Accès Administration Complète</h3>
-            <p class="card-desc" style="margin-bottom: 24px;">Pour gérer les utilisateurs, les institutions et les paramètres système avancés.</p>
-            <div style="display: flex; gap: 16px; justify-content: center;">
-                <a href="/admin/" class="btn btn-secondary">Ouvrir Django Admin</a>
-                <a href="{% url 'blockchain_status' %}" class="btn btn-primary">
-                    <i class="fas fa-link" style="margin-right: 8px;"></i>État Blockchain
-                </a>
-            </div>
-        </div>
+    <div style="text-align: right;">
+        <div class="balance-badge">{{ stats.treasury_balance|floatformat:2 }} ALGO</div>
+        <p style="font-size: 0.8rem; opacity: 0.5;">Frais de transaction sécurisés</p>
     </div>
-</section>
+</div>
+
+<div class="admin-stats-grid">
+    <div class="stat-card-admin">
+        <span class="stat-label">🎓 Étudiants</span>
+        <span class="stat-value">{{ stats.student_count }}</span>
+    </div>
+    <div class="stat-card-admin">
+        <span class="stat-label">🏛️ Universités</span>
+        <span class="stat-value">{{ stats.uni_count }}</span>
+    </div>
+    <div class="stat-card-admin">
+        <span class="stat-label">💼 Recruteurs</span>
+        <span class="stat-value">{{ stats.recruiter_count }}</span>
+    </div>
+    <div class="stat-card-admin">
+        <span class="stat-label">📜 Diplômes Totaux</span>
+        <span class="stat-value">{{ stats.total_diplomas }}</span>
+    </div>
+</div>
+
+<div class="recent-activity">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h3 style="font-weight: 800; font-size: 1.2rem;">Diplômes Récemment Émis</h3>
+        <a href="#" style="color: #00a651; text-decoration: none; font-weight: 700; font-size: 0.9rem;">Tout voir →</a>
+    </div>
+    
+    <div class="table-responsive">
+        <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 1px solid #f1f5f9;">
+                    <th style="padding: 16px; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">Étudiant</th>
+                    <th style="padding: 16px; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">Diplôme</th>
+                    <th style="padding: 16px; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">Université</th>
+                    <th style="padding: 16px; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">Blockchain</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for diploma in recent_diplomas %}
+                <tr style="border-bottom: 1px solid #f8fafc;">
+                    <td style="padding: 16px; font-weight: 700;">{{ diploma.student_first_name }} {{ diploma.student_last_name }}</td>
+                    <td style="padding: 16px;">{{ diploma.degree_name }}</td>
+                    <td style="padding: 16px; color: #64748b;">{{ diploma.institution.name }}</td>
+                    <td style="padding: 16px;">
+                        {% if diploma.blockchain_tx_id %}
+                        <span class="status-active">OK</span>
+                        {% else %}
+                        <span class="status-inactive">Non ancré</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 40px; color: #94a3b8;">Aucune activité récente.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 {% endblock %}

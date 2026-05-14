@@ -13,3 +13,5 @@ python manage.py collectstatic --no-input
 # Optional: log blockchain connectivity in build output
 python manage.py check_blockchain
 
+# Seed initial admin
+python manage.py seed_admin

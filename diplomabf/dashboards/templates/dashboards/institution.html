@@ -14,12 +14,12 @@
     .account-summary {
         background: white;
         padding: 24px;
-        border-radius: 4px;
+        border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         margin-bottom: 32px;
         display: grid;
-        grid-template-columns: 2fr 1fr 1fr;
-        gap: 32px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
         align-items: center;
     }
 
@@ -56,9 +56,9 @@
 
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 24px;
-        margin-bottom: 40px;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 16px;
+        margin-bottom: 32px;
     }
 
     .stat-card {
@@ -146,9 +146,26 @@
     }
 </style>
 
+<style>
+    @media (max-width: 600px) {
+        .header-bar {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        .header-bar .btn {
+            width: 100%;
+            text-align: center;
+        }
+        .account-summary {
+            padding: 16px;
+        }
+    }
+</style>
+
 <div class="header-bar">
     <h1 style="font-weight: 800; font-size: 1.5rem;">Tableau de bord</h1>
-    <a href="{% url 'emit_diploma' %}" class="btn" style="background: var(--accent-green); color: white; border: none; padding: 12px 24px; font-weight: 700;">➕ Nouveau diplôme</a>
+    <a href="{% url 'emit_diploma' %}" class="btn" style="background: var(--accent-green); color: white; border: none; padding: 12px 24px; font-weight: 700; border-radius: 8px;">➕ Nouveau diplôme</a>
 </div>
 
 <!-- Account Summary -->
@@ -197,48 +214,50 @@
         <div class="box-title">Registre - Derniers ajouts</div>
         <a href="{% url 'institution_register' %}" class="btn-action">Voir tout le registre</a>
     </div>
-    <table class="table-res">
-        <thead>
-            <tr>
-                <th>Matricule</th>
-                <th>Nom Complet</th>
-                <th>Diplôme</th>
-                <th>Date</th>
-                <th>Statut</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for diploma in diplomas %}
-            <tr>
-                <td>{{ diploma.student_id_number }}</td>
-                <td style="font-weight: 700;">{{ diploma.student_first_name }} {{ diploma.student_last_name }}</td>
-                <td>{{ diploma.degree_name }}</td>
-                <td>{{ diploma.graduation_date|date:"d / m / Y" }}</td>
-                <td>
-                    {% if diploma.status == 'valid' %}
-                    <span class="status-badge status-valid">Valide</span>
-                    {% elif diploma.status == 'revoked' %}
-                    <span class="status-badge status-revoked">✘ Révoqué</span>
-                    {% else %}
-                    <span class="status-badge status-pending">⌛ En attente</span>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if not diploma.blockchain_tx_id %}
-                    <button onclick="anchorDiploma('{{ diploma.id }}')" class="btn-action">Ancrer</button>
-                    {% else %}
-                    <span style="font-size: 0.7rem; color: #888;">Blockchain OK</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6" style="text-align: center; color: #888; padding: 40px;">Aucun diplôme enregistré.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table-res" style="min-width: 800px;">
+            <thead>
+                <tr>
+                    <th>Matricule</th>
+                    <th>Nom Complet</th>
+                    <th>Diplôme</th>
+                    <th>Date</th>
+                    <th>Statut</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for diploma in diplomas %}
+                <tr>
+                    <td>{{ diploma.student_id_number }}</td>
+                    <td style="font-weight: 700;">{{ diploma.student_first_name }} {{ diploma.student_last_name }}</td>
+                    <td>{{ diploma.degree_name }}</td>
+                    <td>{{ diploma.graduation_date|date:"d / m / Y" }}</td>
+                    <td>
+                        {% if diploma.status == 'valid' %}
+                        <span class="status-badge status-valid">Valide</span>
+                        {% elif diploma.status == 'revoked' %}
+                        <span class="status-badge status-revoked">✘ Révoqué</span>
+                        {% else %}
+                        <span class="status-badge status-pending">⌛ En attente</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not diploma.blockchain_tx_id %}
+                        <button onclick="anchorDiploma('{{ diploma.id }}')" class="btn-action">Ancrer</button>
+                        {% else %}
+                        <span style="font-size: 0.7rem; color: #888;">Blockchain OK</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; color: #888; padding: 40px;">Aucun diplôme enregistré.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <script>

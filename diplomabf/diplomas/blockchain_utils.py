@@ -23,6 +23,15 @@ def get_treasury_account():
     except Exception:
         return None, None, None
 
+def get_balance(address):
+    """Returns the balance of an account in ALGO."""
+    client = get_algod_client()
+    try:
+        account_info = client.account_info(address)
+        return account_info.get('amount', 0) / 1_000_000
+    except Exception:
+        return 0
+
 def onboard_university(uni_name):
     """
     1. Generates a new account for the university.
