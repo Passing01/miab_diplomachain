@@ -11,6 +11,7 @@ urlpatterns = [
     path('institution/', views.institution_dashboard, name='dashboard_institution'),
     path('institution/emit/', views.emit_diploma, name='emit_diploma'),
     path('institution/diploma/<int:diploma_id>/pdf/', views.diploma_pdf, name='diploma_pdf'),
+    path('institution/diploma/<int:diploma_id>/details/', views.institution_diploma_detail, name='institution_diploma_detail'),
     path('institution/register/', views.institution_register, name='institution_register'),
     path('institution/search/', views.search_diplomas, name='search_diplomas'),
     
@@ -25,4 +26,10 @@ urlpatterns = [
     path('admin/user/<int:user_id>/reset-password/', views.admin_reset_password, name='admin_reset_password'),
     path('admin/create/', views.admin_create_admin, name='admin_create_admin'),
     path('admin/diploma/<int:diploma_id>/', views.admin_diploma_detail, name='admin_diploma_detail'),
+    
+    path('institution/api/student-info/', views.get_student_info, name='get_student_info'),
+    path('institution/request-algo/', views.request_algo_topup, name='request_algo_topup'),
+    
+    path('admin-panel/topup-requests/', views.admin_topup_requests, name='admin_topup_requests'),
+    path('admin-panel/topup-requests/<int:req_id>/approve/', views.admin_approve_topup, name='admin_approve_topup'),
 ]

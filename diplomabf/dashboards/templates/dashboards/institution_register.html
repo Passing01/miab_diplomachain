@@ -116,7 +116,7 @@
                         {% if not diploma.blockchain_tx_id %}
                         <button onclick="anchorDiploma('{{ diploma.id }}')" class="btn-action">Ancrer</button>
                         {% else %}
-                        <button class="btn-action">Détails</button>
+                        <a href="{% url 'institution_diploma_detail' diploma.id %}" class="btn-action" style="text-decoration: none; color: inherit; display: inline-block;">Détails</a>
                         {% endif %}
                         {% if diploma.pdf_file %}
                             <a href="{% url 'diploma_pdf' diploma.id %}" target="_blank" class="btn-action">PDF</a>

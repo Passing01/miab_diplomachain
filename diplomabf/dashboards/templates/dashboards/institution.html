@@ -165,7 +165,13 @@
 
 <div class="header-bar">
     <h1 style="font-weight: 800; font-size: 1.5rem;">Tableau de bord</h1>
-    <a href="{% url 'emit_diploma' %}" class="btn" style="background: var(--accent-green); color: white; border: none; padding: 12px 24px; font-weight: 700; border-radius: 8px;">➕ Nouveau diplôme</a>
+    <div style="display: flex; gap: 10px;">
+        <form action="{% url 'request_algo_topup' %}" method="POST" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn" style="background: var(--blue-400); color: #fff; border: none; padding: 12px 24px; font-weight: 700; border-radius: 8px; cursor: pointer;">Demander des ALGO</button>
+        </form>
+        <a href="{% url 'emit_diploma' %}" class="btn" style="background: var(--accent-green); color: white; border: none; padding: 12px 24px; font-weight: 700; border-radius: 8px; text-decoration: none;">➕ Nouveau diplôme</a>
+    </div>
 </div>
 
 <!-- Account Summary -->

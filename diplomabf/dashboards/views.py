@@ -431,3 +431,99 @@ def blockchain_status(request):
         status_data['error'] = str(e)
         
     return render(request, 'dashboards/blockchain_status.html', {'status': status_data})
+
+@login_required
+def institution_diploma_detail(request, diploma_id):
+    if request.user.role != 'institution':
+        return redirect('dashboard')
+        
+    try:
+        inst = Institution.objects.get(name=request.user.institution_name)
+        diploma = Diploma.objects.get(id=diploma_id, institution=inst)
+    except (Institution.DoesNotExist, Diploma.DoesNotExist):
+        messages.error(request, "Diplôme introuvable.")
+        return redirect('institution_register')
+        
+    verifications = VerificationLog.objects.filter(diploma=diploma).order_by('-verified_at')
+    
+    return render(request, 'dashboards/institution_diploma_detail.html', {
+        'diploma': diploma,
+        'verifications': verifications
+    })
+
+from django.http import JsonResponse
+
+@login_required
+def get_student_info(request):
+    """API endpoint for universities to fetch student info by INE."""
+    if request.user.role != 'institution':
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+        
+    ine = request.GET.get('ine', '').strip()
+    try:
+        student = CustomUser.objects.get(ine=ine, role='student')
+        return JsonResponse({
+            'success': True,
+            'first_name': student.first_name,
+            'last_name': student.last_name,
+            'email': student.email,
+            'student_id': student.ine
+        })
+    except CustomUser.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Étudiant non trouvé pour cet INE.'})
+
+from accounts.models import TopUpRequest
+
+@login_required
+def request_algo_topup(request):
+    """View for institutions to request ALGO top-up."""
+    if request.user.role != 'institution':
+        return redirect('dashboard')
+    
+    try:
+        inst = Institution.objects.get(name=request.user.institution_name)
+    except Institution.DoesNotExist:
+        messages.error(request, "Institution non trouvée.")
+        return redirect('dashboard_institution')
+        
+    if request.method == 'POST':
+        # Check if already has a pending request
+        if TopUpRequest.objects.filter(institution=inst, status='pending').exists():
+            messages.warning(request, "Vous avez déjà une demande en attente.")
+        else:
+            TopUpRequest.objects.create(institution=inst, amount_requested=2)
+            messages.success(request, "Demande de recharge de 2 ALGO envoyée à l'administrateur avec succès.")
+            
+    return redirect('dashboard_institution')
+
+@login_required
+def admin_topup_requests(request):
+    if request.user.role != 'admin':
+        return redirect('dashboard')
+        
+    requests = TopUpRequest.objects.all().order_by('-created_at')
+    return render(request, 'dashboards/admin_topup_requests.html', {'requests': requests})
+
+@login_required
+def admin_approve_topup(request, req_id):
+    if request.user.role != 'admin':
+        return redirect('dashboard')
+        
+    try:
+        topup = TopUpRequest.objects.get(id=req_id)
+        if topup.status == 'pending':
+            from diplomas.blockchain_utils import fund_account
+            tx_id = fund_account(topup.institution.blockchain_address, topup.amount_requested)
+            if tx_id:
+                topup.status = 'approved'
+                topup.save()
+                messages.success(request, f"Recharge approuvée et effectuée. TxID: {tx_id}")
+            else:
+                messages.error(request, "Erreur lors de la transaction sur la blockchain. Vérifiez le solde de la trésorerie.")
+        else:
+            messages.warning(request, "Cette demande a déjà été traitée.")
+    except TopUpRequest.DoesNotExist:
+        messages.error(request, "Demande introuvable.")
+        
+    return redirect('admin_topup_requests')
+

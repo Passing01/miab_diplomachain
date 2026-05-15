@@ -1,18 +1,18 @@
 {% extends 'dashboards/base_dashboard.html' %}
 
-{% block dash_title %}Détails Certifiés du Diplôme{% endblock %}
+{% block dash_title %}Détails du Diplôme{% endblock %}
 
 {% block dash_content %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
     .diploma-header-card {
-        background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         color: white;
         padding: 48px;
         border-radius: 32px;
         margin-bottom: 40px;
         text-align: center;
-        box-shadow: 0 20px 40px rgba(5, 150, 105, 0.2);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     }
 
     .info-grid-premium {
@@ -58,12 +58,12 @@
 
 <div class="info-grid-premium">
     <div class="info-box-premium">
-        <span class="box-label">Émis par</span>
-        <div class="box-value">{{ diploma.institution.name }}</div>
+        <span class="box-label">Étudiant</span>
+        <div class="box-value">{{ diploma.student_first_name }} {{ diploma.student_last_name }}</div>
     </div>
     <div class="info-box-premium">
-        <span class="box-label">Titulaire</span>
-        <div class="box-value">{{ diploma.student_first_name }} {{ diploma.student_last_name }}</div>
+        <span class="box-label">INE / Matricule</span>
+        <div class="box-value">{{ diploma.student_id_number }}</div>
     </div>
     <div class="info-box-premium">
         <span class="box-label">Date d'obtention</span>

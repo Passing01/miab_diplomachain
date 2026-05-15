@@ -85,3 +85,30 @@ def anchor_hash_on_algorand(document_hash, university_private_key):
     except Exception as e:
         print(f"Blockchain Anchoring Error: {e}")
         return None
+
+def fund_account(receiver_address, amount_algo):
+    """
+    Funds a specific address with a certain amount of ALGO from the Treasury.
+    amount_algo is in ALGO (will be converted to microAlgos).
+    """
+    client = get_algod_client()
+    treso_private_key, treso_address, _ = get_treasury_account()
+    
+    if treso_private_key and treso_address:
+        try:
+            params = client.suggested_params()
+            funding_txn = transaction.PaymentTxn(
+                sender=treso_address,
+                sp=params,
+                receiver=receiver_address,
+                amt=int(amount_algo * 1_000_000) # Convert to microAlgos
+            )
+            
+            signed_funding = funding_txn.sign(treso_private_key)
+            txid = client.send_transaction(signed_funding)
+            print(f"Account {receiver_address} funded with {amount_algo} ALGO. TxID: {txid}")
+            return txid
+        except Exception as e:
+            print(f"Funding Error: {e}")
+            return None
+    return None

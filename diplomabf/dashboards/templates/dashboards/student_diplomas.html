@@ -3,6 +3,7 @@
 {% block dash_title %}Registre de mes Diplômes{% endblock %}
 
 {% block dash_content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
     .header-flex {
         display: flex;
@@ -268,6 +269,11 @@
             </div>
         </div>
 
+        <div style="text-align: center; margin-bottom: 24px;">
+            <div id="qrcode" style="display: flex; justify-content: center; margin-bottom: 12px; padding: 10px; background: white; border-radius: 8px;"></div>
+            <a id="downloadQrBtn" href="#" download="qrcode_diplome.png" style="font-size: 0.9rem; color: #3b82f6; text-decoration: none; font-weight: bold; background: rgba(59, 130, 246, 0.1); padding: 8px 16px; border-radius: 20px;">⬇️ Télécharger le QR Code</a>
+        </div>
+
         <div class="modal-footer">
             <a id="modalDownloadBtn" href="#" class="btn-download">
                 📥 Télécharger le Diplôme (PDF)
@@ -284,6 +290,27 @@
         document.getElementById('modalDate').innerText = date;
         document.getElementById('modalID').innerText = uniqueId;
         document.getElementById('modalDownloadBtn').href = downloadUrl;
+        
+        // Generate QR Code
+        document.getElementById('qrcode').innerHTML = ''; // clear previous
+        new QRCode(document.getElementById("qrcode"), {
+            text: "MIAB-" + uniqueId,
+            width: 150,
+            height: 150,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+        
+        // Give time to render then set download link
+        setTimeout(() => {
+            const canvas = document.querySelector("#qrcode canvas");
+            if (canvas) {
+                document.getElementById('downloadQrBtn').href = canvas.toDataURL("image/png");
+                document.getElementById('downloadQrBtn').download = "MIAB_" + uniqueId + "_QR.png";
+            }
+        }, 100);
+
         document.getElementById('diplomaModal').style.display = 'flex';
     }
 

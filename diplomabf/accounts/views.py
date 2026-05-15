@@ -59,7 +59,8 @@ def register_view(request):
                     role=data.get('role'),
                     institution_name=data.get('institution_name', ''),
                     company_name=data.get('company_name', ''),
-                    job_title=data.get('job_title', '')
+                    job_title=data.get('job_title', ''),
+                    ine=data.get('ine', '')
                 )
                 
                 # If role is institution, create Institution object and onboard
