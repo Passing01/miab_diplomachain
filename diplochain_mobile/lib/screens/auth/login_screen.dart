@@ -94,15 +94,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                     const SizedBox(height: 60),
 
                     // Logo
-                    Container(
-                      width: 80, height: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white.withOpacity(0.2)),
-                      ),
-                      child: const Center(child: Text('🎓', style: TextStyle(fontSize: 36))),
-                    ),
+                    const AppLogo(),
                     const SizedBox(height: 24),
 
                     // Titre

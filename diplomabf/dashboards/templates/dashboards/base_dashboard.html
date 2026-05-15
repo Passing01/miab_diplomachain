@@ -39,6 +39,69 @@
         position: sticky;
         top: 0;
         height: 100vh;
+        z-index: 1000;
+        transition: transform 0.3s ease;
+    }
+
+    .mobile-header {
+        display: none;
+        background: var(--sidebar-bg);
+        color: white;
+        padding: 16px;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1100;
+    }
+
+    .menu-toggle {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+
+    @media (max-width: 992px) {
+        .dashboard-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            transform: translateX(-100%);
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .mobile-header {
+            display: flex;
+        }
+
+        .main-content {
+            padding: 16px !important;
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
     }
 
     .sidebar-brand {
@@ -127,13 +190,27 @@
         padding: 0 !important;
     }
     
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 1rem;
+    }
+
     nav.navbar { display: none; }
     footer.footer { display: none; }
 </style>
 
+<div class="mobile-header">
+    <div style="font-weight: 800; font-size: 1.2rem;">DiploChain BF</div>
+    <button class="menu-toggle" id="sidebarToggle">☰</button>
+</div>
+
+<div class="overlay" id="overlay"></div>
+
 <div class="dashboard-layout">
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
             <h2>DiploChain BF</h2>
             <p>
@@ -154,11 +231,25 @@
         <div class="sidebar-nav">
             <div class="nav-section">
                 <div class="nav-title">Principal</div>
+                {% if request.user.role != 'admin' %}
                 <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">📊 Tableau de bord</a>
+                {% endif %}
                 {% if request.user.role == 'institution' %}
                     <a href="{% url 'emit_diploma' %}" class="nav-item {% if request.resolver_match.url_name == 'emit_diploma' %}active{% endif %}">➕ Nouveau diplôme</a>
                     <a href="{% url 'institution_register' %}" class="nav-item {% if request.resolver_match.url_name == 'institution_register' %}active{% endif %}">📋 Registre diplômes</a>
                     <a href="{% url 'search_diplomas' %}" class="nav-item {% if request.resolver_match.url_name == 'search_diplomas' %}active{% endif %}">🔍 Rechercher</a>
+                {% endif %}
+                {% if request.user.role == 'admin' %}
+                    <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard_admin' %}active{% endif %}">📊 Dashboard Global</a>
+                    <a href="{% url 'admin_manage_users' 'admin' %}" class="nav-item {% if role_key == 'admin' %}active{% endif %}">🛡️ Gestion Admins</a>
+                    <a href="{% url 'admin_manage_users' 'institution' %}" class="nav-item {% if role_key == 'institution' %}active{% endif %}">🏛️ Gestion Universités</a>
+                    <a href="{% url 'admin_manage_users' 'student' %}" class="nav-item {% if role_key == 'student' %}active{% endif %}">🎓 Gestion Étudiants</a>
+                    <a href="{% url 'admin_manage_users' 'recruiter' %}" class="nav-item {% if role_key == 'recruiter' %}active{% endif %}">💼 Gestion Recruteurs</a>
+                    <a href="{% url 'blockchain_status' %}" class="nav-item {% if request.resolver_match.url_name == 'blockchain_status' %}active{% endif %}">⛓️ État Blockchain</a>
+                {% endif %}
+                {% if request.user.role == 'student' %}
+                    <a href="{% url 'student_diplomas' %}" class="nav-item {% if request.resolver_match.url_name == 'student_diplomas' %}active{% endif %}">📜 Mes Diplômes</a>
+                    <a href="{% url 'student_verifications' %}" class="nav-item {% if request.resolver_match.url_name == 'student_verifications' %}active{% endif %}">📈 Vérifications</a>
                 {% endif %}
             </div>
 
@@ -170,12 +261,22 @@
         </div>
 
         <div class="sidebar-footer">
-            <div class="inst-logo">
-                {{ request.user.institution_name|slice:":3"|upper }}
+            <div class="inst-logo" style="background: var(--accent-green); color: white;">
+                {{ request.user.first_name|slice:":1"|upper }}{{ request.user.last_name|slice:":1"|upper }}
             </div>
             <div>
-                <div style="font-weight: 700; font-size: 0.85rem;">{{ request.user.institution_name|default:"Établissement" }}</div>
-                <div style="font-size: 0.75rem; opacity: 0.6;">Administrateur</div>
+                <div style="font-weight: 700; font-size: 0.85rem;">{{ request.user.get_full_name|default:request.user.username }}</div>
+                <div style="font-size: 0.75rem; opacity: 0.6;">
+                    {% if request.user.role == 'institution' %}
+                        Agent Établissement
+                    {% elif request.user.role == 'student' %}
+                        Étudiant
+                    {% elif request.user.role == 'recruiter' %}
+                        Recruteur
+                    {% else %}
+                        Utilisateur
+                    {% endif %}
+                </div>
             </div>
         </div>
     </aside>
@@ -185,7 +286,7 @@
         {% if messages %}
             <div style="margin-bottom: 16px;">
                 {% for message in messages %}
-                    <div style="padding: 12px 16px; border: 1px solid #ccc; background: #fff3f3; color: #7a1d1d; margin-bottom: 8px; font-weight: 700;">
+                    <div style="padding: 12px 16px; border: 1px solid #ccc; background: #fff3f3; color: #7a1d1d; margin-bottom: 8px; font-weight: 700; border-radius: 8px;">
                         {{ message }}
                     </div>
                 {% endfor %}
@@ -196,4 +297,46 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmAction(event, message, type = 'warning') {
+        event.preventDefault();
+        const url = event.currentTarget.getAttribute('href');
+        
+        Swal.fire({
+            title: 'Êtes-vous sûr ?',
+            text: message,
+            icon: type,
+            showCancelButton: true,
+            confirmButtonColor: '#00a651',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Oui, confirmer',
+            cancelButtonText: 'Annuler',
+            borderRadius: '20px'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = url;
+            }
+        });
+        return false;
+    }
+
+    // Mobile Sidebar Toggle
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const toggle = document.getElementById('sidebarToggle');
+
+    if (toggle) {
+        toggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+    }
+
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+    }
+</script>
 {% endblock %}

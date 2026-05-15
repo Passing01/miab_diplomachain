@@ -10,7 +10,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     
     # API Routes
-    path('api/accounts/', include('accounts.urls')),
+    path('api/accounts/', include('accounts.api_urls')),
     path('api/core/', include('diplomas.urls')),
 
     # Dashboards

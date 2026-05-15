@@ -1,0 +1,72 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; }
+
+.layout { display: flex; min-height: 100vh; }
+
+/* SIDEBAR */
+.sidebar { width: 240px; background: #1a1a2e; color: white; display: flex; flex-direction: column; padding: 20px 0; flex-shrink: 0; }
+.sidebar-logo { font-size: 20px; font-weight: 700; padding: 0 20px 20px; border-bottom: 1px solid #2a2a4a; }
+.logo-diplo { color: white; }
+.logo-chain { color: #e63946; }
+.logo-bf { color: #f4a261; }
+.sidebar-user { display: flex; align-items: center; gap: 10px; padding: 16px 20px; border-bottom: 1px solid #2a2a4a; }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: #2d6a4f; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.user-name { font-size: 11px; font-weight: 600; color: white; }
+.user-role { font-size: 10px; color: #8888aa; }
+.sidebar-nav { flex: 1; padding: 16px 0; }
+.nav-section { font-size: 10px; color: #8888aa; letter-spacing: 0.08em; padding: 12px 20px 4px; }
+.nav-item { display: block; padding: 8px 20px; font-size: 13px; color: #ccccdd; cursor: pointer; text-decoration: none; transition: background 0.15s; }
+.nav-item:hover { background: #2a2a4a; }
+.nav-item.active { background: #2a2a4a; color: white; border-left: 3px solid #2d6a4f; }
+.sidebar-switch { padding: 16px 20px; border-top: 1px solid #2a2a4a; display: flex; flex-direction: column; gap: 8px; }
+.sidebar-switch button { padding: 7px; font-size: 11px; border: 1px solid #2a2a4a; background: transparent; color: #ccccdd; border-radius: 6px; cursor: pointer; }
+.sidebar-switch button:hover { background: #2a2a4a; color: white; }
+
+/* MAIN */
+.main { flex: 1; padding: 24px; overflow-y: auto; }
+.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.topbar h1 { font-size: 22px; font-weight: 600; color: #1a1a2e; }
+.topbar-actions { display: flex; gap: 10px; }
+
+/* BOUTONS */
+.btn-primary { background: #2d6a4f; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+.btn-primary:hover { background: #1b4332; }
+.btn-secondary { background: white; color: #1a1a2e; border: 1px solid #ddd; padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+
+/* CARTE DIPLOME */
+.diplome-card { background: #1a5c38; border-radius: 12px; padding: 28px; margin-bottom: 20px; color: white; }
+.diplome-card-header { margin-bottom: 20px; }
+.diplome-country { font-size: 12px; color: #95d5b2; margin-bottom: 6px; }
+.diplome-name { font-size: 24px; font-weight: 700; letter-spacing: 0.05em; }
+.diplome-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.diplome-field { display: flex; flex-direction: column; gap: 4px; }
+.field-label { font-size: 11px; color: #95d5b2; }
+.field-value { font-size: 14px; font-weight: 500; color: white; }
+
+/* QR CARD */
+.card { background: white; border-radius: 10px; padding: 20px; border: 1px solid #eee; margin-bottom: 16px; }
+.card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.card-header h2 { font-size: 15px; font-weight: 600; color: #1a1a2e; flex: 1; }
+.card-subtitle { font-size: 12px; color: #888; margin-bottom: 14px; }
+.badge-count { background: #e8f4fd; color: #1a6196; font-size: 11px; padding: 3px 8px; border-radius: 99px; }
+.qr-card { display: flex; align-items: center; gap: 24px; background: #fef9e7; border-color: #f4a261; }
+.qr-box { width: 80px; height: 80px; background: white; border: 2px solid #f4a261; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.qr-pattern { font-size: 48px; color: #1a1a2e; }
+.qr-right h3 { font-size: 14px; font-weight: 600; color: #1a1a2e; margin-bottom: 6px; }
+.qr-right p { font-size: 12px; color: #666; margin-bottom: 12px; }
+.qr-actions { display: flex; gap: 8px; }
+
+/* STATUT */
+.statut-card { display: flex; align-items: flex-start; gap: 14px; background: #d8f3dc; border-color: #95d5b2; }
+.statut-icon { font-size: 24px; flex-shrink: 0; }
+.statut-title { font-size: 14px; font-weight: 600; color: #1b4332; margin-bottom: 4px; }
+.statut-desc { font-size: 12px; color: #2d6a4f; }
+
+/* TABLEAU */
+.table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table th { text-align: left; padding: 10px 12px; font-size: 11px; color: #888; border-bottom: 1px solid #eee; font-weight: 600; text-transform: uppercase; }
+.table td { padding: 12px; border-bottom: 1px solid #f5f5f5; color: #333; }
+.table tr:last-child td { border-bottom: none; }
+.table tr:hover td { background: #f9f9f9; }
+.badge { font-size: 11px; padding: 3px 10px; border-radius: 99px; font-weight: 500; }
+.badge-valide { background: #d8f3dc; color: #2d6a4f; }

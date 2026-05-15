@@ -1,0 +1,152 @@
+{% extends 'dashboards/base_dashboard.html' %}
+
+{% block dash_title %}Historique des Vérifications{% endblock %}
+
+{% block dash_content %}
+<style>
+    .header-bar {
+        margin-bottom: 40px;
+    }
+
+    .verification-card {
+        background: white;
+        border-radius: 24px;
+        padding: 0;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .v-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .v-table th {
+        text-align: left;
+        padding: 20px 24px;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .v-table td {
+        padding: 20px 24px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+
+    .recruiter-info {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .avatar {
+        width: 48px;
+        height: 48px;
+        background: #f1f5f9;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        color: #475569;
+        font-size: 1rem;
+    }
+
+    .recruiter-name {
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 2px;
+    }
+
+    .recruiter-meta {
+        font-size: 0.8rem;
+        color: #64748b;
+    }
+
+    .diploma-tag {
+        display: inline-block;
+        padding: 6px 12px;
+        background: #f1f5f9;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #475569;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #166534;
+        font-weight: 700;
+        font-size: 0.85rem;
+    }
+</style>
+
+<div class="header-bar">
+    <h1 style="font-weight: 800; font-size: 1.8rem; margin-bottom: 8px;">Historique des Consultations</h1>
+    <p style="color: #64748b;">Découvrez qui a vérifié l'authenticité de vos diplômes sur la blockchain.</p>
+</div>
+
+<div class="verification-card">
+    <table class="v-table">
+        <thead>
+            <tr>
+                <th>Recruteur / Entreprise</th>
+                <th>Diplôme Consulté</th>
+                <th>Date & Heure</th>
+                <th>Résultat</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in verifications %}
+            <tr>
+                <td>
+                    <div class="recruiter-info">
+                        <div class="avatar">
+                            {{ log.recruiter.first_name|slice:":1" }}{{ log.recruiter.last_name|slice:":1" }}
+                        </div>
+                        <div>
+                            <div class="recruiter-name">{{ log.recruiter.get_full_name|default:log.recruiter.username }}</div>
+                            <div class="recruiter-meta">
+                                {{ log.recruiter.job_title }} @ {{ log.recruiter.company_name|default:"Organisme" }}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="diploma-tag">{{ log.diploma.degree_name }}</div>
+                </td>
+                <td style="color: #64748b; font-size: 0.9rem;">
+                    {{ log.verified_at|date:"d F Y" }} à {{ log.verified_at|date:"H:i" }}
+                </td>
+                <td>
+                    <div class="status-badge">
+                        <span>✅</span> Authentifié
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align: center; padding: 60px; color: #94a3b8;">
+                    Aucune consultation n'a été enregistrée pour vos diplômes.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div style="margin-top: 40px; background: #fffbeb; border: 1px solid #fef3c7; padding: 24px; border-radius: 16px;">
+    <h3 style="font-size: 1rem; font-weight: 800; color: #92400e; margin-bottom: 8px;">🛡️ Respect de la vie privée</h3>
+    <p style="font-size: 0.9rem; color: #b45309; line-height: 1.5;">
+        Chaque fois qu'un tiers vérifie votre diplôme via notre plateforme, une trace est conservée ici. 
+        Cela vous permet de savoir exactement quelles entreprises s'intéressent à votre parcours académique.
+    </p>
+</div>
+
+{% endblock %}

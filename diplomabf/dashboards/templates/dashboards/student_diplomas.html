@@ -1,0 +1,327 @@
+{% extends 'dashboards/base_dashboard.html' %}
+
+{% block dash_title %}Registre de mes Diplômes{% endblock %}
+
+{% block dash_content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+    .header-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .search-container {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 14px 20px 14px 45px;
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+        background: white;
+        font-size: 0.95rem;
+        transition: all 0.3s;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--accent-green);
+        box-shadow: 0 0 0 4px rgba(0, 166, 81, 0.1);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+    }
+
+    .diploma-list-card {
+        background: white;
+        border-radius: 24px;
+        padding: 0;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .diploma-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .diploma-table th {
+        text-align: left;
+        padding: 20px 24px;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .diploma-table td {
+        padding: 20px 24px;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+
+    .degree-name-cell {
+        font-weight: 700;
+        color: #1e293b;
+        font-size: 1rem;
+    }
+
+    .inst-name-cell {
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+
+    .id-badge {
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: 700;
+        color: var(--accent-green);
+        background: #f0fdf4;
+        padding: 4px 8px;
+        border-radius: 6px;
+    }
+
+    .btn-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1f5f9;
+        color: #475569;
+        text-decoration: none;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-circle:hover {
+        background: var(--primary-gradient);
+        color: white;
+        transform: scale(1.1);
+    }
+
+    /* Modal Styling - Shared with dashboard but redefined here for standalone page */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(5px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        padding: 20px;
+    }
+
+    .modal-container {
+        background: white;
+        width: 100%;
+        max-width: 600px;
+        border-radius: 32px;
+        padding: 40px;
+        position: relative;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #64748b;
+    }
+
+    .modal-header { text-align: center; margin-bottom: 32px; }
+    .modal-icon { font-size: 3rem; margin-bottom: 16px; }
+    .modal-title { font-size: 1.6rem; font-weight: 800; color: #1e293b; }
+
+    .modal-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    .modal-item-label {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        font-weight: 700;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .modal-item-value { font-size: 1rem; color: #334155; font-weight: 700; }
+
+    .btn-download {
+        width: 100%;
+        padding: 16px;
+        background: var(--primary-gradient);
+        color: white;
+        border-radius: 16px;
+        font-weight: 800;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+</style>
+
+<div class="header-flex">
+    <div>
+        <h1 style="font-weight: 800; font-size: 1.8rem; margin-bottom: 8px;">Tous mes Diplômes</h1>
+        <p style="color: #64748b;">Consultez et gérez l'intégralité de vos certifications.</p>
+    </div>
+    
+    <form method="GET" class="search-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" name="q" class="search-input" placeholder="Rechercher un diplôme..." value="{{ query }}">
+    </form>
+</div>
+
+<div class="diploma-list-card">
+    <table class="diploma-table">
+        <thead>
+            <tr>
+                <th>Diplôme & Établissement</th>
+                <th>Spécialité</th>
+                <th>Date d'obtention</th>
+                <th>ID MIAB</th>
+                <th style="text-align: center;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for diploma in diplomas %}
+            <tr>
+                <td>
+                    <div class="degree-name-cell">{{ diploma.degree_name }}</div>
+                    <div class="inst-name-cell">{{ diploma.institution.name }}</div>
+                </td>
+                <td>{{ diploma.major|default:"Tronc Commun" }}</td>
+                <td>{{ diploma.graduation_date|date:"d M Y" }}</td>
+                <td><span class="id-badge">{{ diploma.unique_identifier }}</span></td>
+                <td>
+                    <div style="display: flex; gap: 12px; justify-content: center;">
+                        <button onclick="showDiplomaDetails('{{ diploma.id }}', '{{ diploma.degree_name|escapejs }}', '{{ diploma.institution.name|escapejs }}', '{{ diploma.graduation_date|date:'d/m/Y' }}', '{{ diploma.unique_identifier }}', '{{ diploma.major|default:'N/A'|escapejs }}', '{% url 'student_diploma_download' diploma.id %}')" class="btn-circle" title="Détails">👁️</button>
+                        <a href="{% url 'student_diploma_download' diploma.id %}" class="btn-circle" title="Télécharger">📥</a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 60px; color: #94a3b8;">
+                    {% if query %}
+                        Aucun diplôme ne correspond à votre recherche "{{ query }}".
+                    {% else %}
+                        Vous n'avez aucun diplôme enregistré pour le moment.
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal -->
+<div id="diplomaModal" class="modal-overlay">
+    <div class="modal-container">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <div class="modal-header">
+            <div class="modal-icon">🎓</div>
+            <h2 id="modalDegreeName" class="modal-title">Intitulé du Diplôme</h2>
+        </div>
+        
+        <div class="modal-info-grid">
+            <div>
+                <span class="modal-item-label">Établissement</span>
+                <div id="modalInstitution" class="modal-item-value">Nom de l'université</div>
+            </div>
+            <div>
+                <span class="modal-item-label">Spécialité</span>
+                <div id="modalMajor" class="modal-item-value">Spécialité</div>
+            </div>
+            <div>
+                <span class="modal-item-label">Date d'obtention</span>
+                <div id="modalDate" class="modal-item-value">01/01/2024</div>
+            </div>
+            <div>
+                <span class="modal-item-label">Identifiant MIAB</span>
+                <div id="modalID" class="modal-item-value" style="color: var(--accent-green);">ABCDEF123456</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 24px;">
+            <div id="qrcode" style="display: flex; justify-content: center; margin-bottom: 12px; padding: 10px; background: white; border-radius: 8px;"></div>
+            <a id="downloadQrBtn" href="#" download="qrcode_diplome.png" style="font-size: 0.9rem; color: #3b82f6; text-decoration: none; font-weight: bold; background: rgba(59, 130, 246, 0.1); padding: 8px 16px; border-radius: 20px;">⬇️ Télécharger le QR Code</a>
+        </div>
+
+        <div class="modal-footer">
+            <a id="modalDownloadBtn" href="#" class="btn-download">
+                📥 Télécharger le Diplôme (PDF)
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showDiplomaDetails(id, degree, institution, date, uniqueId, major, downloadUrl) {
+        document.getElementById('modalDegreeName').innerText = degree;
+        document.getElementById('modalInstitution').innerText = institution;
+        document.getElementById('modalMajor').innerText = major;
+        document.getElementById('modalDate').innerText = date;
+        document.getElementById('modalID').innerText = uniqueId;
+        document.getElementById('modalDownloadBtn').href = downloadUrl;
+        
+        // Generate QR Code
+        document.getElementById('qrcode').innerHTML = ''; // clear previous
+        new QRCode(document.getElementById("qrcode"), {
+            text: "MIAB-" + uniqueId,
+            width: 150,
+            height: 150,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+        
+        // Give time to render then set download link
+        setTimeout(() => {
+            const canvas = document.querySelector("#qrcode canvas");
+            if (canvas) {
+                document.getElementById('downloadQrBtn').href = canvas.toDataURL("image/png");
+                document.getElementById('downloadQrBtn').download = "MIAB_" + uniqueId + "_QR.png";
+            }
+        }, 100);
+
+        document.getElementById('diplomaModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('diplomaModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        let modal = document.getElementById('diplomaModal');
+        if (event.target == modal) closeModal();
+    }
+</script>
+
+{% endblock %}

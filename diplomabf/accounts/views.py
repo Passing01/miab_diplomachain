@@ -59,7 +59,8 @@ def register_view(request):
                     role=data.get('role'),
                     institution_name=data.get('institution_name', ''),
                     company_name=data.get('company_name', ''),
-                    job_title=data.get('job_title', '')
+                    job_title=data.get('job_title', ''),
+                    ine=data.get('ine', '')
                 )
                 
                 # If role is institution, create Institution object and onboard
@@ -88,19 +89,27 @@ def logout_view(request):
 from django.contrib.auth.decorators import login_required
 @login_required
 def profile_view(request):
-    if request.path.startswith('/api/'):
-        return JsonResponse({
-            'id': request.user.id,
-            'username': request.user.username,
-            'email': request.user.email,
-            'first_name': request.user.first_name,
-            'last_name': request.user.last_name,
-            'role': request.user.role,
-            'company_name': request.user.company_name,
-            'job_title': request.user.job_title,
-            'institution_name': request.user.institution_name,
-        })
+    """View to display user profile information."""
     return render(request, 'accounts/profile.html')
+
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+
+@login_required
+def change_password(request):
+    """View to allow users to change their password."""
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important to keep the user logged in
+            messages.success(request, 'Votre mot de passe a été mis à jour avec succès !')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Veuillez corriger les erreurs ci-dessous.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'accounts/change_password.html', {'form': form})
 
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes

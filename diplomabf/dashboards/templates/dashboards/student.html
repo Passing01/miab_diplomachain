@@ -1,73 +1,622 @@
-{% extends 'landing_page/base.html' %}
+{% extends 'dashboards/base_dashboard.html' %}
 
-{% block title %}Tableau de bord Étudiant{% endblock %}
+{% block dash_title %}Espace Étudiant{% endblock %}
 
-{% block content %}
-<section class="page-hero">
-    <div class="page-hero-grid"></div>
-    <div class="section-container page-hero-content">
-        <h1 class="page-title">Mes Diplômes</h1>
-        <p class="page-lead">Consultez et partagez vos certifications authentifiées sur la blockchain.</p>
+{% block dash_content %}
+<style>
+    :root {
+        --glass-bg: rgba(255, 255, 255, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.3);
+        --primary-gradient: linear-gradient(135deg, #004d26 0%, #00a651 100%);
+        --accent-gradient: linear-gradient(135deg, #b8860b 0%, #ffcc33 100%);
+        --blue-gradient: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    }
+
+    .dashboard-header {
+        margin-bottom: 40px;
+        animation: fadeInDown 0.8s ease-out;
+    }
+
+    .welcome-text h1 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .welcome-text p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    /* Stats Grid */
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+
+    .stat-card-premium {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid #f0f0f0;
+    }
+
+    .stat-card-premium:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card-premium::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: var(--primary-gradient);
+    }
+
+    .stat-card-premium.amber-accent::before {
+        background: var(--accent-gradient);
+    }
+
+    .stat-card-premium.blue::before {
+        background: var(--blue-gradient);
+    }
+
+    .stat-icon {
+        font-size: 1.5rem;
+        margin-bottom: 16px;
+        width: 45px;
+        height: 45px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .stat-info .label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-info .value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #1a1a1a;
+        margin: 4px 0;
+    }
+
+    .stat-info .subtext {
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    /* Diploma Cards */
+    .section-title-premium {
+        font-size: 1.4rem;
+        font-weight: 800;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .section-title-premium span.title-text {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .view-all-link {
+        font-size: 0.9rem;
+        color: var(--accent-green);
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    .view-all-link:hover {
+        text-decoration: underline;
+    }
+
+    .diploma-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+        margin-bottom: 40px;
+    }
+
+    .diploma-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 32px;
+        position: relative;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .diploma-card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .diploma-status-badge {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        padding: 6px 14px;
+        border-radius: 100px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-active { background: #dcfce7; color: #166534; }
+    .status-pending { background: #fef9c3; color: #854d0e; }
+
+    .diploma-icon {
+        width: 60px;
+        height: 60px;
+        background: #f1f5f9;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        margin-bottom: 24px;
+    }
+
+    .diploma-degree {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 8px;
+        line-height: 1.3;
+    }
+
+    .diploma-institution {
+        color: #64748b;
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .diploma-meta {
+        border-top: 1px solid #e2e8f0;
+        padding-top: 20px;
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .meta-item .label {
+        font-size: 0.7rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        font-weight: 700;
+        display: block;
+    }
+
+    .meta-item .value {
+        font-size: 0.85rem;
+        color: #334155;
+        font-weight: 600;
+    }
+
+    .btn-view-premium {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 14px;
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        margin-top: 24px;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        gap: 8px;
+    }
+
+    .btn-view-premium:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 166, 81, 0.2);
+    }
+
+    /* Verification Log Table */
+    .table-container-premium {
+        background: white;
+        border-radius: 24px;
+        padding: 32px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .table-premium {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .table-premium th {
+        text-align: left;
+        padding: 16px;
+        color: #94a3b8;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .table-premium td {
+        padding: 20px 16px;
+        border-bottom: 1px solid #f8fafc;
+    }
+
+    .recruiter-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
+        background: #f1f5f9;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #475569;
+        font-size: 0.9rem;
+    }
+
+    .recruiter-name {
+        font-weight: 700;
+        color: #1e293b;
+        font-size: 0.95rem;
+    }
+
+    .recruiter-company {
+        font-size: 0.8rem;
+        color: #64748b;
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(5px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        padding: 20px;
+    }
+
+    .modal-container {
+        background: white;
+        width: 100%;
+        max-width: 600px;
+        border-radius: 32px;
+        padding: 40px;
+        position: relative;
+        animation: modalScaleUp 0.3s ease-out;
+    }
+
+    @keyframes modalScaleUp {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #64748b;
+    }
+
+    .modal-header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .modal-icon {
+        font-size: 3rem;
+        margin-bottom: 16px;
+    }
+
+    .modal-title {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .modal-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    .modal-item-label {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        font-weight: 700;
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .modal-item-value {
+        font-size: 1rem;
+        color: #334155;
+        font-weight: 700;
+    }
+
+    .modal-footer {
+        display: flex;
+        gap: 16px;
+    }
+
+    .btn-download {
+        flex: 1;
+        padding: 16px;
+        background: var(--primary-gradient);
+        color: white;
+        border-radius: 16px;
+        font-weight: 800;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.3s;
+    }
+
+    .btn-download:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+
+    /* Animations */
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-up {
+        animation: fadeInUp 0.8s ease-out forwards;
+    }
+</style>
+
+<div class="dashboard-header">
+    <div class="welcome-text">
+        <h1>Bonjour, {{ request.user.first_name }} 👋</h1>
+        <p>Bienvenue dans votre espace certifié. Voici le récapitulatif de vos activités.</p>
     </div>
-</section>
+</div>
 
-<section style="padding: 60px 0;">
-    <div class="section-container">
-        <div class="grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px;">
-            {% for diploma in diplomas %}
-            <div class="card">
-                <div class="card-icon">🎓</div>
-                <h3 class="card-title">{{ diploma.degree_name }}</h3>
-                <p class="card-desc">{{ diploma.institution.name }}</p>
-                <div style="margin-top: 16px;">
-                    <span class="badge {% if diploma.blockchain_tx_id %}badge-green{% else %}badge-amber{% endif %}">
-                        {% if diploma.blockchain_tx_id %}Vérifié Blockchain{% else %}En attente{% endif %}
-                    </span>
-                </div>
-                <div style="margin-top: 20px;">
-                    <p style="font-size: 0.75rem; color: var(--text-muted);">ID: {{ diploma.unique_identifier }}</p>
-                    <a href="{% url 'diploma_verify_ui' %}?id={{ diploma.unique_identifier }}" class="btn btn-secondary btn-sm" style="margin-top: 10px; width: 100%;">Voir l'attestation</a>
-                </div>
-            </div>
-            {% empty %}
-            <div class="card" style="grid-column: 1/-1; text-align: center;">
-                <p class="card-desc">Aucun diplôme trouvé pour votre compte.</p>
-            </div>
-            {% endfor %}
+<!-- Stats Section -->
+<div class="stats-container">
+    <div class="stat-card-premium">
+        <div class="stat-icon">🎓</div>
+        <div class="stat-info">
+            <div class="label">Diplômes enregistrés</div>
+            <div class="value">{{ stats.total }}</div>
+            <div class="subtext">Certifiés par vos établissements</div>
         </div>
+    </div>
+    
+    <div class="stat-card-premium amber-accent">
+        <div class="stat-icon">🔗</div>
+        <div class="stat-info">
+            <div class="label">Ancrages Blockchain</div>
+            <div class="value" style="color: #1a1a1a;">{{ stats.blockchain_verified|default:"0" }}</div>
+            <div class="subtext">Preuves immuables générées</div>
+        </div>
+    </div>
 
-        <h2 class="section-title" style="margin-top: 60px;">Historique des Vérifications</h2>
-        <p class="page-lead" style="margin-bottom: 24px; font-size: 1rem;">Sachez qui a consulté et vérifié l'authenticité de vos diplômes.</p>
+    <div class="stat-card-premium blue">
+        <div class="stat-icon">👁️</div>
+        <div class="stat-info">
+            <div class="label">Vérifications externes</div>
+            <div class="value">{{ stats.total_verifications }}</div>
+            <div class="subtext">Nombre total de consultations</div>
+        </div>
+    </div>
+</div>
+
+<!-- Diplomas Section -->
+<h2 class="section-title-premium">
+    <span class="title-text"><span>📜</span> Mes Diplômes Récents</span>
+    <a href="{% url 'student_diplomas' %}" class="view-all-link">Voir tout le registre →</a>
+</h2>
+
+<div class="diploma-grid">
+    {% for diploma in diplomas %}
+    <div class="diploma-card animate-up">
+        <span class="diploma-status-badge {% if diploma.blockchain_tx_id %}status-active{% else %}status-pending{% endif %}">
+            {% if diploma.blockchain_tx_id %}Blockchain OK{% else %}Traitement...{% endif %}
+        </span>
         
-        <div class="card" style="padding: 0; overflow: hidden;">
-            <table style="width: 100%; border-collapse: collapse;">
-                <thead>
-                    <tr style="background: rgba(16, 30, 56, 0.5); border-bottom: 1px solid var(--border);">
-                        <th style="padding: 16px; text-align: left; font-size: 0.85rem; color: var(--text-secondary);">Recruteur / Entreprise</th>
-                        <th style="padding: 16px; text-align: left; font-size: 0.85rem; color: var(--text-secondary);">Diplôme Consulté</th>
-                        <th style="padding: 16px; text-align: left; font-size: 0.85rem; color: var(--text-secondary);">Date & Heure</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for log in verifications %}
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td style="padding: 16px;">
-                            <div style="font-weight: 600; color: var(--text-primary);">{{ log.recruiter.first_name }} {{ log.recruiter.last_name }}</div>
-                            <div style="font-size: 0.75rem; color: var(--cyan-400);">{{ log.recruiter.job_title }} @ {{ log.recruiter.company_name }}</div>
-                        </td>
-                        <td style="padding: 16px; font-size: 0.9rem;">{{ log.diploma.degree_name }}</td>
-                        <td style="padding: 16px; font-size: 0.85rem; color: var(--text-muted);">{{ log.verified_at|date:"d/m/Y H:i" }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="3" style="padding: 40px; text-align: center; color: var(--text-muted);">
-                            Aucune vérification n'a été effectuée sur vos diplômes pour le moment.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="diploma-icon">🎓</div>
+        
+        <h3 class="diploma-degree">{{ diploma.degree_name }}</h3>
+        <div class="diploma-institution">
+            <span>🏛️</span> {{ diploma.institution.name }}
+        </div>
+        
+        <div class="diploma-meta">
+            <div class="meta-item">
+                <span class="label">Date d'obtention</span>
+                <span class="value">{{ diploma.graduation_date|date:"d M Y" }}</span>
+            </div>
+            <div class="meta-item" style="text-align: right;">
+                <span class="label">ID Unique</span>
+                <span class="value">{{ diploma.unique_identifier }}</span>
+            </div>
+        </div>
+
+        <button onclick="showDiplomaDetails('{{ diploma.id }}', '{{ diploma.degree_name|escapejs }}', '{{ diploma.institution.name|escapejs }}', '{{ diploma.graduation_date|date:'d/m/Y' }}', '{{ diploma.unique_identifier }}', '{{ diploma.major|default:'N/A'|escapejs }}', '{% url 'student_diploma_download' diploma.id %}')" class="btn-view-premium">
+            🔍 Consulter les détails
+        </button>
+    </div>
+    {% empty %}
+    <div style="grid-column: 1/-1; text-align: center; padding: 40px; background: white; border-radius: 20px;">
+        <p style="color: #64748b;">Aucun diplôme trouvé pour le moment.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- History Section -->
+<h2 class="section-title-premium" style="margin-top: 60px;">
+    <span class="title-text"><span>📈</span> Consultations Récentes</span>
+    <a href="{% url 'student_verifications' %}" class="view-all-link">Historique complet →</a>
+</h2>
+
+<div class="table-container-premium animate-up">
+    <div class="table-responsive">
+        <table class="table-premium" style="min-width: 700px;">
+            <thead>
+                <tr>
+                    <th>Recruteur / Entreprise</th>
+                    <th>Diplôme Concerné</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in verifications %}
+                <tr>
+                    <td>
+                        <div class="recruiter-cell">
+                            <div class="avatar-circle">
+                                {{ log.recruiter.first_name|slice:":1" }}{{ log.recruiter.last_name|slice:":1" }}
+                            </div>
+                            <div>
+                                <div class="recruiter-name">{{ log.recruiter.get_full_name|default:log.recruiter.username }}</div>
+                                <div class="recruiter-company">{{ log.recruiter.job_title }} @ {{ log.recruiter.company_name|default:"Organisme" }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="font-weight: 600; color: #334155;">{{ log.diploma.degree_name }}</td>
+                    <td style="color: #64748b; font-size: 0.9rem;">{{ log.verified_at|date:"d/m/Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" style="text-align: center; padding: 40px; color: #94a3b8;">
+                        Aucune consultation récente.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="diplomaModal" class="modal-overlay">
+    <div class="modal-container">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <div class="modal-header">
+            <div class="modal-icon">🎓</div>
+            <h2 id="modalDegreeName" class="modal-title">Intitulé du Diplôme</h2>
+        </div>
+        
+        <div class="modal-info-grid">
+            <div>
+                <span class="modal-item-label">Établissement</span>
+                <div id="modalInstitution" class="modal-item-value">Nom de l'université</div>
+            </div>
+            <div>
+                <span class="modal-item-label">Spécialité</span>
+                <div id="modalMajor" class="modal-item-value">Spécialité</div>
+            </div>
+            <div>
+                <span class="modal-item-label">Date d'obtention</span>
+                <div id="modalDate" class="modal-item-value">01/01/2024</div>
+            </div>
+            <div>
+                <span class="modal-item-label">Identifiant MIAB</span>
+                <div id="modalID" class="modal-item-value" style="color: var(--accent-green);">ABCDEF123456</div>
+            </div>
+        </div>
+
+        <div style="background: #f8fafc; padding: 20px; border-radius: 16px; margin-bottom: 32px; font-size: 0.9rem; color: #64748b;">
+            <p><strong>Note :</strong> Ce diplôme est certifié numériquement sur la blockchain Algorand. Toute modification du document original invalidera sa certification.</p>
+        </div>
+
+        <div class="modal-footer">
+            <a id="modalDownloadBtn" href="#" class="btn-download">
+                📥 Télécharger le Diplôme (PDF)
+            </a>
         </div>
     </div>
-</section>
+</div>
+
+<script>
+    function showDiplomaDetails(id, degree, institution, date, uniqueId, major, downloadUrl) {
+        document.getElementById('modalDegreeName').innerText = degree;
+        document.getElementById('modalInstitution').innerText = institution;
+        document.getElementById('modalMajor').innerText = major;
+        document.getElementById('modalDate').innerText = date;
+        document.getElementById('modalID').innerText = uniqueId;
+        document.getElementById('modalDownloadBtn').href = downloadUrl;
+        
+        document.getElementById('diplomaModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('diplomaModal').style.display = 'none';
+    }
+
+    // Close on outside click
+    window.onclick = function(event) {
+        let modal = document.getElementById('diplomaModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+</script>
+
 {% endblock %}

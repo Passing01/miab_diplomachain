@@ -1,0 +1,129 @@
+{% extends 'dashboards/base_dashboard.html' %}
+
+{% block dash_title %}Détails Certifiés du Diplôme{% endblock %}
+
+{% block dash_content %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+    .diploma-header-card {
+        background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
+        color: white;
+        padding: 48px;
+        border-radius: 32px;
+        margin-bottom: 40px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(5, 150, 105, 0.2);
+    }
+
+    .info-grid-premium {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin-bottom: 40px;
+    }
+
+    .info-box-premium {
+        background: white;
+        padding: 32px;
+        border-radius: 24px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    .box-label { font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; display: block; }
+    .box-value { font-size: 1.1rem; font-weight: 700; color: #1e293b; }
+
+    .verification-timeline {
+        background: white;
+        padding: 40px;
+        border-radius: 32px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    }
+</style>
+
+<div class="diploma-header-card">
+    <div style="font-size: 3rem; margin-bottom: 16px;">🎓</div>
+    <h1 style="font-weight: 800; font-size: 2.2rem; margin-bottom: 12px;">{{ diploma.degree_name }}</h1>
+    <p style="opacity: 0.9; font-size: 1.1rem;">ID MIAB : <strong style="color: #fbbf24;">{{ diploma.unique_identifier }}</strong></p>
+    {% if diploma.blockchain_tx_id %}
+    <div style="margin-top: 24px; display: inline-block; background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 100px; font-weight: 700;">
+        ⛓️ Ancré sur Algorand : {{ diploma.blockchain_tx_id|slice:":20" }}...
+    </div>
+    {% endif %}
+
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 32px;">
+        <div id="qrcode" style="padding: 10px; background: white; border-radius: 12px; display: inline-block; box-shadow: 0 10px 25px rgba(0,0,0,0.2);"></div>
+        <a id="downloadQrBtn" href="#" download="qrcode_diplome.png" style="margin-top: 16px; font-size: 0.9rem; color: white; text-decoration: none; font-weight: bold; background: rgba(255, 255, 255, 0.2); padding: 8px 20px; border-radius: 20px; transition: 0.3s;">⬇️ Télécharger le QR Code MIAB</a>
+    </div>
+</div>
+
+<div class="info-grid-premium">
+    <div class="info-box-premium">
+        <span class="box-label">Émis par</span>
+        <div class="box-value">{{ diploma.institution.name }}</div>
+    </div>
+    <div class="info-box-premium">
+        <span class="box-label">Titulaire</span>
+        <div class="box-value">{{ diploma.student_first_name }} {{ diploma.student_last_name }}</div>
+    </div>
+    <div class="info-box-premium">
+        <span class="box-label">Date d'obtention</span>
+        <div class="box-value">{{ diploma.graduation_date|date:"d F Y" }}</div>
+    </div>
+</div>
+
+<div class="verification-timeline">
+    <h3 style="font-weight: 800; margin-bottom: 32px; font-size: 1.4rem;">Historique des Consultations Recruteurs</h3>
+    
+    {% if verifications %}
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="text-align: left; border-bottom: 1px solid #f1f5f9;">
+                <th style="padding: 16px; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">Recruteur</th>
+                <th style="padding: 16px; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">Entreprise</th>
+                <th style="padding: 16px; color: #94a3b8; font-size: 0.8rem; text-transform: uppercase;">Date & Heure</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for v in verifications %}
+            <tr style="border-bottom: 1px solid #f8fafc;">
+                <td style="padding: 16px; font-weight: 700;">{{ v.recruiter.get_full_name|default:v.recruiter.username }}</td>
+                <td style="padding: 16px; color: #64748b;">{{ v.recruiter.company_name|default:"Organisme" }}</td>
+                <td style="padding: 16px; font-family: monospace; color: #475569;">{{ v.verified_at|date:"d/m/Y H:i" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div style="text-align: center; padding: 60px; color: #94a3b8;">
+        Ce diplôme n'a pas encore été consulté par un recruteur.
+    </div>
+    {% endif %}
+</div>
+
+<div style="margin-top: 40px; text-align: center;">
+    <a href="javascript:history.back()" style="color: #64748b; text-decoration: none; font-weight: 700;">← Retour</a>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const uniqueId = "{{ diploma.unique_identifier }}";
+        new QRCode(document.getElementById("qrcode"), {
+            text: "MIAB-" + uniqueId,
+            width: 160,
+            height: 160,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+        });
+        
+        setTimeout(() => {
+            const canvas = document.querySelector("#qrcode canvas");
+            if (canvas) {
+                document.getElementById('downloadQrBtn').href = canvas.toDataURL("image/png");
+                document.getElementById('downloadQrBtn').download = "MIAB_" + uniqueId + "_QR.png";
+            }
+        }, 100);
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'dashboards/base_dashboard.html' %}
+
+{% block dash_title %}Demandes de recharge ALGO{% endblock %}
+
+{% block dash_content %}
+<div style="background: white; border-radius: 24px; padding: 32px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);">
+    <h2 style="font-weight: 800; margin-bottom: 24px;">Demandes de recharge ALGO</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div style="padding: 12px; border-radius: 8px; background: {% if message.tags == 'error' %}#fee2e2{% else %}#dcfce7{% endif %}; color: {% if message.tags == 'error' %}#991b1b{% else %}#166534{% endif %}; margin-bottom: 20px;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="table-responsive">
+        <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 1px solid #f1f5f9;">
+                    <th style="padding: 16px;">Date</th>
+                    <th style="padding: 16px;">Université</th>
+                    <th style="padding: 16px;">Montant (ALGO)</th>
+                    <th style="padding: 16px;">Statut</th>
+                    <th style="padding: 16px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in requests %}
+                <tr style="border-bottom: 1px solid #f8fafc;">
+                    <td style="padding: 16px;">{{ req.created_at|date:"d/m/Y H:i" }}</td>
+                    <td style="padding: 16px; font-weight: 700;">{{ req.institution.name }}</td>
+                    <td style="padding: 16px;">{{ req.amount_requested }}</td>
+                    <td style="padding: 16px;">
+                        {% if req.status == 'pending' %}
+                            <span style="color: #d97706; background: #fef3c7; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">En attente</span>
+                        {% elif req.status == 'approved' %}
+                            <span style="color: #166534; background: #dcfce7; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Approuvé</span>
+                        {% else %}
+                            <span style="color: #991b1b; background: #fee2e2; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold;">Rejeté</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 16px;">
+                        {% if req.status == 'pending' %}
+                        <form action="{% url 'admin_approve_topup' req.id %}" method="POST" onsubmit="return confirm('Voulez-vous approuver cette recharge et envoyer les fonds sur la blockchain ?');">
+                            {% csrf_token %}
+                            <button type="submit" style="background: #00a651; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; cursor: pointer;">Approuver & Envoyer</button>
+                        </form>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 40px; color: #94a3b8;">Aucune demande de recharge.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

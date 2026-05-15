@@ -232,6 +232,11 @@
                     <input type="text" name="username" id="username" class="form-control" placeholder="jdupont" required>
                 </div>
                 
+                <div class="form-group full student-fields" id="student_field_ine">
+                    <label for="ine">INE / ID National</label>
+                    <input type="text" name="ine" id="ine" class="form-control" placeholder="ex: N23493409843">
+                </div>
+                
                 <div class="form-group full inst-fields" id="inst_field_name">
                     <label for="institution_name">Nom de l'Université / École</label>
                     <input type="text" name="institution_name" id="institution_name" class="form-control" placeholder="ex: Université Joseph Ki-Zerbo">
@@ -270,15 +275,21 @@
         const role = document.querySelector('input[name="role"]:checked').value;
         const instFields = document.querySelectorAll('.inst-fields');
         const recruiterFields = document.querySelectorAll('.recruiter-fields');
+        const studentFields = document.querySelectorAll('.student-fields');
 
         // Reset all
         instFields.forEach(f => f.style.display = 'none');
         recruiterFields.forEach(f => f.style.display = 'none');
+        studentFields.forEach(f => f.style.display = 'none');
         document.getElementById('institution_name').required = false;
         document.getElementById('company_name').required = false;
         document.getElementById('job_title').required = false;
+        document.getElementById('ine').required = false;
 
-        if (role === 'institution') {
+        if (role === 'student') {
+            studentFields.forEach(f => f.style.display = 'block');
+            document.getElementById('ine').required = true;
+        } else if (role === 'institution') {
             instFields.forEach(f => f.style.display = 'block');
             document.getElementById('institution_name').required = true;
         } else if (role === 'recruiter') {
