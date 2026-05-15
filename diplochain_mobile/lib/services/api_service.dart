@@ -4,15 +4,18 @@ import '../models/diplome.dart';
 
 class ApiService {
   // Use 10.0.2.2 for Android Emulator, 127.0.0.1 for iOS
-  static const String baseUrl = 'http://192.168.1.95:8000/api';
+  static const String baseUrl = 'https://miab-diplomachain.onrender.com';
   late final Dio _dio;
 
   ApiService() {
     _dio = Dio(BaseOptions(
       baseUrl: baseUrl,
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
-      headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+      connectTimeout: const Duration(seconds: 25),
+      receiveTimeout: const Duration(seconds: 25),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
     ));
 
     // Interceptor to add JWT Token
@@ -32,7 +35,7 @@ class ApiService {
 
   Future<Map<String, dynamic>> login(String username, String password) async {
     try {
-      final response = await _dio.post('/accounts/api/login/', data: {
+      final response = await _dio.post('/api/accounts/login/', data: {
         'username': username,
         'password': password,
       });
@@ -42,7 +45,7 @@ class ApiService {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', data['access']);
         await prefs.setString('refresh', data['refresh']);
-        
+
         // We should fetch user profile after login to get name/company
         return await getProfile();
       }
@@ -63,7 +66,7 @@ class ApiService {
     required String phone,
   }) async {
     try {
-      final response = await _dio.post('/accounts/api/register/', data: {
+      final response = await _dio.post('/api/accounts/register/', data: {
         'username': username,
         'email': email,
         'password': password,
@@ -87,17 +90,19 @@ class ApiService {
 
   Future<Map<String, dynamic>> getProfile() async {
     try {
-      final response = await _dio.get('/accounts/api/profile/');
+      final response = await _dio.get('/api/accounts/profile/');
       if (response.statusCode == 200) {
         final data = response.data;
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('recruteur_nom', '${data['first_name']} ${data['last_name']}');
-        await prefs.setString('recruteur_entreprise', data['company_name'] ?? '');
+        await prefs.setString(
+            'recruteur_nom', '${data['first_name']} ${data['last_name']}');
+        await prefs.setString(
+            'recruteur_entreprise', data['company_name'] ?? '');
         await prefs.setString('recruteur_email', data['email']);
-        
+
         // Return a recruteur object (using simple Map or existing model)
         return {
-          'success': true, 
+          'success': true,
           'recruteur': Recruteur(
             id: data['id'].toString(),
             nom: '${data['first_name']} ${data['last_name']}',
@@ -122,7 +127,7 @@ class ApiService {
 
   Future<Map<String, dynamic>> verifierParMatricule(String identifier) async {
     try {
-      final response = await _dio.get('/core/verify/', queryParameters: {
+      final response = await _dio.get('/api/core/verify/', queryParameters: {
         'id': identifier,
       });
 
@@ -130,20 +135,27 @@ class ApiService {
         final data = response.data;
         final diplome = Diplome(
           matricule: data['data']['student_id_number'],
-          nomComplet: '${data['student_first_name']} ${data['student_last_name']}',
+          nomComplet:
+              '${data['student_first_name']} ${data['student_last_name']}',
           diplome: data['degree_name'],
           mention: data['data']['mention'] ?? 'N/A',
           etablissement: data['institution_name'],
           annee: data['data']['graduation_date'].split('-')[0],
           dateDelivrance: data['data']['graduation_date'],
-          statut: data['is_blockchain_verified'] ? StatutDiplome.valide : StatutDiplome.valide, // If found in DB, it's valid for now
+          statut: data['is_blockchain_verified']
+              ? StatutDiplome.valide
+              : StatutDiplome.valide, // If found in DB, it's valid for now
         );
         return {'success': true, 'diplome': diplome};
       }
       return {'success': false, 'message': 'Diplôme introuvable'};
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
-        return {'success': false, 'statut': StatutDiplome.introuvable, 'message': 'Aucun diplôme trouvé'};
+        return {
+          'success': false,
+          'statut': StatutDiplome.introuvable,
+          'message': 'Aucun diplôme trouvé'
+        };
       }
       return {'success': false, 'message': _handleError(e)};
     }
@@ -156,26 +168,33 @@ class ApiService {
         'file': await MultipartFile.fromFile(filePath, filename: fileName),
       });
 
-      final response = await _dio.post('/core/verify/', data: formData);
+      final response = await _dio.post('/api/core/verify/', data: formData);
 
       if (response.statusCode == 200) {
         final data = response.data;
         final diplome = Diplome(
           matricule: data['data']['student_id_number'],
-          nomComplet: '${data['student_first_name']} ${data['student_last_name']}',
+          nomComplet:
+              '${data['student_first_name']} ${data['student_last_name']}',
           diplome: data['degree_name'],
           mention: data['data']['mention'] ?? 'N/A',
           etablissement: data['institution_name'],
           annee: data['data']['graduation_date'].split('-')[0],
           dateDelivrance: data['data']['graduation_date'],
-          statut: data['is_blockchain_verified'] ? StatutDiplome.valide : StatutDiplome.valide,
+          statut: data['is_blockchain_verified']
+              ? StatutDiplome.valide
+              : StatutDiplome.valide,
         );
         return {'success': true, 'diplome': diplome};
       }
       return {'success': false, 'message': 'Diplôme introuvable'};
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
-        return {'success': false, 'statut': StatutDiplome.introuvable, 'message': 'Fichier non reconnu'};
+        return {
+          'success': false,
+          'statut': StatutDiplome.introuvable,
+          'message': 'Fichier non reconnu'
+        };
       }
       return {'success': false, 'message': _handleError(e)};
     }
@@ -191,19 +210,21 @@ class ApiService {
 
   Future<Map<String, dynamic>> getHistorique() async {
     try {
-      final response = await _dio.get('/core/verifications/');
+      final response = await _dio.get('/api/core/verifications/');
 
       if (response.statusCode == 200) {
         final List data = response.data;
-        final verifications = data.map((v) => Verification(
-          id:               v['id'].toString(),
-          matricule:        v['student_id'] ?? '',
-          nomCandidat:      '${v['student_name']} ${v['student_last_name']}',
-          diplome:          v['degree_name'] ?? '',
-          statut:           StatutDiplome.valide, 
-          dateVerification: DateTime.parse(v['verified_at']),
-          typeVerification: 'qr', 
-        )).toList();
+        final verifications = data
+            .map((v) => Verification(
+                  id: v['id'].toString(),
+                  matricule: v['student_id'] ?? '',
+                  nomCandidat: '${v['student_name']} ${v['student_last_name']}',
+                  diplome: v['degree_name'] ?? '',
+                  statut: StatutDiplome.valide,
+                  dateVerification: DateTime.parse(v['verified_at']),
+                  typeVerification: 'qr',
+                ))
+            .toList();
         return {'success': true, 'verifications': verifications};
       }
       return {'success': false, 'message': 'Erreur de chargement'};
@@ -214,7 +235,10 @@ class ApiService {
 
   String _handleError(DioException e) {
     if (e.response?.data != null && e.response?.data is Map) {
-      return e.response?.data['error'] ?? e.response?.data['message'] ?? e.response?.data['detail'] ?? 'Erreur serveur';
+      return e.response?.data['error'] ??
+          e.response?.data['message'] ??
+          e.response?.data['detail'] ??
+          'Erreur serveur';
     }
     switch (e.type) {
       case DioExceptionType.connectionTimeout:
