@@ -1,0 +1,7 @@
+Endpoints API comptes (base locale: http://127.0.0.1:8000)
+
+Chemins effectifs via /api/accounts/ + /api/* definis dans accounts.urls:
+- /api/accounts/api/login/  (POST)
+- /api/accounts/api/register/  (POST)
+- /api/accounts/api/profile/  (GET)
+- /api/accounts/token/refresh/  (POST)
